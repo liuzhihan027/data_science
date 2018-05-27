@@ -15,7 +15,7 @@ from matplotlib.font_manager import FontProperties
 
 font = FontProperties(fname=r"simsun.ttc", size=14)
 
-#生成随机数组
+#生成随机数组666666666666666666
 def random_int_list(start, stop, length):
   start, stop = (int(start), int(stop)) if start <= stop else (int(stop), int(start))
   length = int(abs(length)) if length else 0
