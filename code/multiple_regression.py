@@ -67,7 +67,7 @@ def p_value(beta_hat_j, sigma_hat_j):
         return 2 * normal_cdf(beta_hat_j / sigma_hat_j)
 
 #
-# REGULARIZED REGRESSION
+# REGULARIZED REGRESSION(回归的正则化)
 #
 
 # alpha is a *hyperparameter* controlling how harsh the penalty is
