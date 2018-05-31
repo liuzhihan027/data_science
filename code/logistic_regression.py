@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 from collections import Counter
 from functools import partial
@@ -7,6 +9,7 @@ from working_with_data import rescale
 from machine_learning import train_test_split
 from multiple_regression import estimate_beta, predict
 import math, random
+
 
 def logistic(x):
     return 1.0 / (1 + math.exp(-x))
@@ -52,7 +55,9 @@ if __name__ == "__main__":
 
     print "linear regression:"
 
+    #数据标准化
     rescaled_x = rescale(x)
+    #使用梯度下降法求解最小值
     beta = estimate_beta(rescaled_x, y)
     print beta
 
