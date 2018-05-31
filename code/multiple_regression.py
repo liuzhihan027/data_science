@@ -72,13 +72,17 @@ def p_value(beta_hat_j, sigma_hat_j):
 
 # alpha is a *hyperparameter* controlling how harsh the penalty is
 # sometimes it's called "lambda" but that already means something in Python
+
+#岭回归惩罚项(1.使用beta的平方和alpha相乘  2.这里不惩罚常数项)
 def ridge_penalty(beta, alpha):
   return alpha * dot(beta[1:], beta[1:])
 
+#构建岭回归平方误差公式(添加惩罚项)
 def squared_error_ridge(x_i, y_i, beta, alpha):
     """estimate error plus ridge penalty on beta"""
     return error(x_i, y_i, beta) ** 2 + ridge_penalty(beta, alpha)
 
+#岭回归误差公式求导
 def ridge_penalty_gradient(beta, alpha):
     """gradient of just the ridge penalty"""
     return [0] + [2 * alpha * beta_j for beta_j in beta[1:]]
