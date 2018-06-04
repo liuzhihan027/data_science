@@ -11,6 +11,7 @@ from functools import partial
 # functions for working with vectors
 #
 
+#矢量和
 def vector_add(v, w):
     """adds two vectors componentwise"""
     return [v_i + w_i for v_i, w_i in zip(v, w)]

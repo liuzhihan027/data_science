@@ -82,17 +82,19 @@ def squared_error_ridge(x_i, y_i, beta, alpha):
     """estimate error plus ridge penalty on beta"""
     return error(x_i, y_i, beta) ** 2 + ridge_penalty(beta, alpha)
 
-#岭回归误差公式求导
+#岭回归误差公式求对参数求梯度(岭回归惩罚梯度)
 def ridge_penalty_gradient(beta, alpha):
     """gradient of just the ridge penalty"""
     return [0] + [2 * alpha * beta_j for beta_j in beta[1:]]
 
+#平方梯度(回归方程参数的偏导 + 岭回归惩罚公式的参数的偏导)
 def squared_error_ridge_gradient(x_i, y_i, beta, alpha):
     """the gradient corresponding to the ith squared error term
     including the ridge penalty"""
     return vector_add(squared_error_gradient(x_i, y_i, beta),
                       ridge_penalty_gradient(beta, alpha))
 
+#梯度下降计算使误差最小的参数
 def estimate_beta_ridge(x, y, alpha):
     """use gradient descent to fit a ridge regression
     with penalty alpha"""
