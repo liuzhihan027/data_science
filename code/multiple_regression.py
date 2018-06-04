@@ -105,9 +105,10 @@ def estimate_beta_ridge(x, y, alpha):
                                x, y, 
                                beta_initial, 
                                0.001)
-
+#lasso回归的惩罚项
 def lasso_penalty(beta, alpha):
-    return alpha * sum(abs(beta_i) for beta_i in beta[1:])    
+    return alpha * sum(abs(beta_i) for beta_i in beta[1:])
+
 
 if __name__ == "__main__":
 
