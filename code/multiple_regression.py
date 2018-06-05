@@ -144,7 +144,7 @@ if __name__ == "__main__":
                                           estimate_sample_beta,
                                           100)
 
-    print bootstrap_betas
+    print 'bootstrap_betas:',bootstrap_betas
 
 
     bootstrap_standard_errors = [
