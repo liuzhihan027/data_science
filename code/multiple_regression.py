@@ -97,6 +97,7 @@ def ridge_penalty_gradient(beta, alpha):
 def squared_error_ridge_gradient(x_i, y_i, beta, alpha):
     """the gradient corresponding to the ith squared error term
     including the ridge penalty"""
+    #矢量和
     return vector_add(squared_error_gradient(x_i, y_i, beta),
                       ridge_penalty_gradient(beta, alpha))
 
@@ -106,7 +107,7 @@ def estimate_beta_ridge(x, y, alpha):
     with penalty alpha"""
     beta_initial = [random.random() for x_i in x[0]]
 
-    #偏函数
+    #偏函数partial(函数,部分参数)输出一个函数
     return minimize_stochastic(partial(squared_error_ridge, alpha=alpha),
                                partial(squared_error_ridge_gradient, 
                                        alpha=alpha), 
@@ -168,6 +169,7 @@ if __name__ == "__main__":
     #[1.174097542924062, 0.07861006463889537, 0.13138388603694567, 0.9899022849002838]
     print
 
+    #使用原有参数和其标准差计算出的p值,越大显著性越低,当大于0.05时认为此参数显著性接近于0
     print "p_value(30.63, 1.174)", p_value(30.63, 1.174)
     print "p_value(0.972, 0.079)", p_value(0.972, 0.079)
     print "p_value(-1.868, 0.131)", p_value(-1.868, 0.131)
@@ -178,6 +180,8 @@ if __name__ == "__main__":
     print "regularization"
 
     random.seed(0)
+
+    #使用不同的惩罚程度观察其r^2大小,r^2越大效果越好
     for alpha in [0.0, 0.01, 0.1, 1, 10]:
         beta = estimate_beta_ridge(x, daily_minutes_good, alpha=alpha)
         print "alpha", alpha
