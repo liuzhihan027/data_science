@@ -34,6 +34,7 @@ def mean(x):
     # type: (object) -> object
     return sum(x) / len(x)
 
+#中位数
 def median(v):
     """finds the 'middle-most' value of v"""
     n = len(v)
