@@ -9,6 +9,7 @@ from working_with_data import rescale
 from machine_learning import train_test_split
 from multiple_regression import estimate_beta, predict
 import math, random
+import matplotlib.pyplot as plt
 
 
 def logistic(x):
@@ -60,6 +61,15 @@ if __name__ == "__main__":
     #使用梯度下降法求解最小值
     beta = estimate_beta(rescaled_x, y)
     print beta
+
+    #预测值
+    predictions = [predict(x_i,beta) for x_i in rescaled_x]
+    print '预测值和实际值画图'
+    plt.scatter(predictions,y)
+    plt.xlabel('predicted')
+    plt.ylabel('actual')
+    plt.show()
+
 
     print "logistic regression:"
 

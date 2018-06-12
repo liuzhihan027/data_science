@@ -31,8 +31,9 @@ def squared_error_gradient(x_i, y_i, beta):
 
 #使用随机梯度下降法求最小值
 def estimate_beta(x, y):
+    #一以内的一个随机数
     beta_initial = [random.random() for x_i in x[0]]
-    return minimize_stochastic(squared_error, 
+    return minimize_stochastic(squared_error,
                                squared_error_gradient, 
                                x, y, 
                                beta_initial, 

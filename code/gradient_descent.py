@@ -118,7 +118,6 @@ def in_random_order(data):
 
 #梯度下降法
 def minimize_stochastic(target_fn, gradient_fn, x, y, theta_0, alpha_0=0.01):
-
     data = zip(x, y)
     theta = theta_0                             # initial guess
     alpha = alpha_0                             # initial step size
