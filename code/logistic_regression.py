@@ -19,13 +19,14 @@ def logistic(x):
 def logistic_prime(x):
     return logistic(x) * (1 - logistic(x))
 
-#逻辑回归最大似然_对数似然
+#逻辑回归最大似然_对数似然_部分似然
 def logistic_log_likelihood_i(x_i, y_i, beta):
     if y_i == 1:
         return math.log(logistic(dot(x_i, beta)))
     else:
         return math.log(1 - logistic(dot(x_i, beta)))
 
+#逻辑回归整体似然=部分似然之积=对数似然后的和
 def logistic_log_likelihood(x, y, beta):
     return sum(logistic_log_likelihood_i(x_i, y_i, beta)
                for x_i, y_i in zip(x, y))
