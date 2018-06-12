@@ -11,13 +11,15 @@ from multiple_regression import estimate_beta, predict
 import math, random
 import matplotlib.pyplot as plt
 
-
+#逻辑回归公式
 def logistic(x):
     return 1.0 / (1 + math.exp(-x))
 
+#逻辑回归导数
 def logistic_prime(x):
     return logistic(x) * (1 - logistic(x))
 
+#逻辑回归最大似然_对数似然
 def logistic_log_likelihood_i(x_i, y_i, beta):
     if y_i == 1:
         return math.log(logistic(dot(x_i, beta)))
