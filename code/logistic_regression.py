@@ -31,6 +31,9 @@ def logistic_log_likelihood(x, y, beta):
     return sum(logistic_log_likelihood_i(x_i, y_i, beta)
                for x_i, y_i in zip(x, y))
 
+
+#下方四个函数就是为了就其最大似然的导数
+
 def logistic_log_partial_ij(x_i, y_i, beta, j):
     """here i is the index of the data point,
     j the index of the derivative"""
@@ -75,11 +78,15 @@ if __name__ == "__main__":
 
 
     print "logistic regression:"
+    print "进行逻辑回归运算:"
 
     random.seed(0)
+
+    #分割训练集和测试集
     x_train, x_test, y_train, y_test = train_test_split(rescaled_x, y, 0.33)
 
     # want to maximize log likelihood on the training data
+    #在训练集中计算出最大似然,和其梯度
     fn = partial(logistic_log_likelihood, x_train, y_train)
     gradient_fn = partial(logistic_log_gradient, x_train, y_train)
 

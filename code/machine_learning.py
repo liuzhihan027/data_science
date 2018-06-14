@@ -13,6 +13,7 @@ def split_data(data, prob):
         results[0 if random.random() < prob else 1].append(row)
     return results
 
+#数据分割,分成训练集和测试集
 def train_test_split(x, y, test_pct):
     data = zip(x, y)                              # pair corresponding values  
     train, test = split_data(data, 1 - test_pct)  # split the dataset of pairs
