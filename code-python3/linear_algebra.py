@@ -9,6 +9,7 @@ from functools import partial, reduce
 # functions for working with vectors
 #
 
+#????
 def vector_add(v, w):
     """adds two vectors componentwise"""
     return [v_i + w_i for v_i, w_i in zip(v,w)]
