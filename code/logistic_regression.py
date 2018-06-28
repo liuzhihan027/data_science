@@ -104,7 +104,7 @@ if __name__ == "__main__":
     gradient_fn = partial(logistic_log_gradient, x_train, y_train)
 
     # pick a random starting point
-    #设置随机点_准备进行梯度下降
+    #设置初始点
     beta_0 = [1, 1, 1]
 
     # and maximize using gradient descent
