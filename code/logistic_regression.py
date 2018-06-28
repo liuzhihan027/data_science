@@ -19,34 +19,38 @@ def logistic(x):
 def logistic_prime(x):
     return logistic(x) * (1 - logistic(x))
 
-#逻辑回归最大似然_对数似然_部分似然
+#逻辑回归最大似然_对数似然_训练数据的单个似然
 def logistic_log_likelihood_i(x_i, y_i, beta):
     if y_i == 1:
         return math.log(logistic(dot(x_i, beta)))
     else:
         return math.log(1 - logistic(dot(x_i, beta)))
 
-#逻辑回归整体似然=部分似然之积=对数似然后的和
+#逻辑回归整体似然=训练数据单个似然之积=对数似然后的和
 def logistic_log_likelihood(x, y, beta):
     return sum(logistic_log_likelihood_i(x_i, y_i, beta)
                for x_i, y_i in zip(x, y))
 
 
-#下方四个函数就是为了就其最大似然的导数
+#下方四个函数就是为了就其最大似然的梯度函数_一个化简后的公式
 
+#https://blog.csdn.net/zjuPeco/article/details/77165974
+
+#j_单个特征权重计算
 def logistic_log_partial_ij(x_i, y_i, beta, j):
     """here i is the index of the data point,
     j the index of the derivative"""
-
     return (y_i - logistic(dot(x_i, beta))) * x_i[j]
-    
+
+#全部特征权重的计算_返回数组
 def logistic_log_gradient_i(x_i, y_i, beta):
     """the gradient of the log likelihood 
     corresponding to the i-th data point"""
 
     return [logistic_log_partial_ij(x_i, y_i, beta, j)
             for j, _ in enumerate(beta)]
-            
+
+#利用上方函数生成对数极大似然的梯度函数
 def logistic_log_gradient(x, y, beta):
     #矢量和
     return reduce(vector_add,
@@ -90,25 +94,30 @@ if __name__ == "__main__":
     x_train, x_test, y_train, y_test = train_test_split(rescaled_x, y, 0.33)
 
     # want to maximize log likelihood on the training data
-    #在训练集中计算出最大似然,和其梯度
+    #使用训练集构建似然函数
     fn = partial(logistic_log_likelihood, x_train, y_train)
+    # 使用训练集构建似然函数的梯度函数
     gradient_fn = partial(logistic_log_gradient, x_train, y_train)
 
     # pick a random starting point
+    #设置随机点_准备进行梯度下降
     beta_0 = [1, 1, 1]
 
     # and maximize using gradient descent
+    #梯度下降取负值(梯度上升)_使预测值等于实际值的概率最大_批量梯度上升
     beta_hat = maximize_batch(fn, gradient_fn, beta_0)
 
     print "beta_batch", beta_hat
 
     beta_0 = [1, 1, 1]
+    #随机梯度上升
     beta_hat = maximize_stochastic(logistic_log_likelihood_i,
                                logistic_log_gradient_i,
                                x_train, y_train, beta_0)
 
     print "beta stochastic", beta_hat
 
+    #模型效果评估
     true_positives = false_positives = true_negatives = false_negatives = 0
 
     for x_i, y_i in zip(x_test, y_test):
@@ -123,7 +132,9 @@ if __name__ == "__main__":
         else:                            # TN: unpaid and we predict unpaid
             true_negatives += 1
 
+    #准确率
     precision = true_positives / (true_positives + false_positives)
+    #召回率
     recall = true_positives / (true_positives + false_negatives)
 
     print "precision", precision
