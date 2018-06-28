@@ -143,3 +143,11 @@ if __name__ == "__main__":
 
     print "precision", precision
     print "recall", recall
+
+    #画图
+    predictions = [ logistic( dot( beta_hat , x_i ) ) for x_i in x_test]
+    plt.scatter( predictions, y_test )
+    plt.xlabel("predicted probability")
+    plt.ylabel("actual outcome")
+    plt.title("Logistic Regression Predicted vs. Actual")
+    plt.show()
