@@ -61,7 +61,7 @@ def safe(f):
 
 #
 # 
-# minimize / maximize batch
+# minimize / maximize batch (批量梯度下降/上升)
 #
 #
 
@@ -107,7 +107,7 @@ def maximize_batch(target_fn, gradient_fn, theta_0, tolerance=0.000001):
                           tolerance)
 
 #
-# minimize / maximize stochastic
+# minimize / maximize stochastic (随机梯度下降/上升)
 #
 
 def in_random_order(data):
