@@ -89,16 +89,17 @@ def minimize_batch(target_fn, gradient_fn, theta_0, tolerance=0.000001):
             return theta
         else:
             theta, value = next_theta, next_value
-
+#函数取负值
 def negate(f):
     """return a function that for any input x returns -f(x)"""
     return lambda *args, **kwargs: -f(*args, **kwargs)
-    
+
+#函数导数取负值
 def negate_all(f):
     """the same when f returns a list of numbers"""
     return lambda *args, **kwargs: [-y for y in f(*args, **kwargs)]
 
-#最大下降
+#随机梯度下降法_取梯度上升
 def maximize_batch(target_fn, gradient_fn, theta_0, tolerance=0.000001):
     return minimize_batch(negate(target_fn),
                           negate_all(gradient_fn),
