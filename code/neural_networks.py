@@ -8,33 +8,42 @@ import math, random
 import matplotlib
 import matplotlib.pyplot as plt
 
+#简单神经元
 def step_function(x):
     return 1 if x >= 0 else 0
 
+#输入权重,偏移量,和参数,返回神经元输出
 def perceptron_output(weights, bias, x):
     """returns 1 if the perceptron 'fires', 0 if not"""
     return step_function(dot(weights, x) + bias)
 
+#一个类似逻辑回归的函数,平滑函数
 def sigmoid(t):
     return 1 / (1 + math.exp(-t))
-    
+
+#神经元的输出
 def neuron_output(weights, inputs):
     return sigmoid(dot(weights, inputs))
 
+#前馈神经网络
 def feed_forward(neural_network, input_vector):
     """takes in a neural network (represented as a list of lists of lists of weights)
     and returns the output from forward-propagating the input"""
 
     outputs = []
 
+    #遍历每层
     for layer in neural_network:
 
-        input_with_bias = input_vector + [1]             # add a bias input
+        input_with_bias = input_vector + [1]             # 添加偏倚
+
         output = [neuron_output(neuron, input_with_bias) # compute the output
                   for neuron in layer]                   # for this layer
+
         outputs.append(output)                           # and remember it
 
         # the input to the next layer is the output of this one
+        #本层的输出作为下一层的输入
         input_vector = output
 
     return outputs
@@ -95,131 +104,143 @@ def show_weights(neuron_idx):
 #算法应用
 if __name__ == "__main__":
 
-    raw_digits = [
-          """11111
-             1...1
-             1...1
-             1...1
-             11111""",
-             
-          """..1..
-             ..1..
-             ..1..
-             ..1..
-             ..1..""",
-             
-          """11111
-             ....1
-             11111
-             1....
-             11111""",
-             
-          """11111
-             ....1
-             11111
-             ....1
-             11111""",     
-             
-          """1...1
-             1...1
-             11111
-             ....1
-             ....1""",             
-             
-          """11111
-             1....
-             11111
-             ....1
-             11111""",   
-             
-          """11111
-             1....
-             11111
-             1...1
-             11111""",             
+    #与或非异或测试
+    xor_network = [
+        [[20,20,-30],# AND
+         [20,20,-10]],# OR
+        [[-60,60,-30]]# 异或
+    ]
 
-          """11111
-             ....1
-             ....1
-             ....1
-             ....1""",
-             
-          """11111
-             1...1
-             11111
-             1...1
-             11111""",    
-             
-          """11111
-             1...1
-             11111
-             ....1
-             11111"""]     
+    for x in [0,1]:
+        for y in [0,1]:
+            print x,y,feed_forward(xor_network,[x,y])
 
-    def make_digit(raw_digit):
-        return [1 if c == '1' else 0
-                for row in raw_digit.split("\n")
-                for c in row.strip()]
-                
-    inputs = map(make_digit, raw_digits)
-
-    targets = [[1 if i == j else 0 for i in range(10)]
-               for j in range(10)]
-
-    random.seed(0)   # to get repeatable results
-    input_size = 25  # each input is a vector of length 25
-    num_hidden = 5   # we'll have 5 neurons in the hidden layer
-    output_size = 10 # we need 10 outputs for each input
-
-    # each hidden neuron has one weight per input, plus a bias weight
-    hidden_layer = [[random.random() for __ in range(input_size + 1)]
-                    for __ in range(num_hidden)]
-
-    # each output neuron has one weight per hidden neuron, plus a bias weight
-    output_layer = [[random.random() for __ in range(num_hidden + 1)]
-                    for __ in range(output_size)]
-
-    # the network starts out with random weights
-    network = [hidden_layer, output_layer]
-
-    # 10,000 iterations seems enough to converge
-    for __ in range(10000):
-        for input_vector, target_vector in zip(inputs, targets):
-            backpropagate(network, input_vector, target_vector)
-
-    def predict(input):
-        return feed_forward(network, input)[-1]
-
-    for i, input in enumerate(inputs):
-        outputs = predict(input)
-        print i, [round(p,2) for p in outputs]
-
-    print """.@@@.
-...@@
-..@@.
-...@@
-.@@@."""
-    print [round(x, 2) for x in
-          predict(  [0,1,1,1,0,  # .@@@.
-                     0,0,0,1,1,  # ...@@
-                     0,0,1,1,0,  # ..@@.
-                     0,0,0,1,1,  # ...@@
-                     0,1,1,1,0]) # .@@@.
-          ]
-    print
-
-    print """.@@@.
-@..@@
-.@@@.
-@..@@
-.@@@."""
-    print [round(x, 2) for x in 
-          predict(  [0,1,1,1,0,  # .@@@.
-                     1,0,0,1,1,  # @..@@
-                     0,1,1,1,0,  # .@@@.
-                     1,0,0,1,1,  # @..@@
-                     0,1,1,1,0]) # .@@@.
-          ]
-    print
-
+#     #数字识别
+#     raw_digits = [
+#           """11111
+#              1...1
+#              1...1
+#              1...1
+#              11111""",
+#
+#           """..1..
+#              ..1..
+#              ..1..
+#              ..1..
+#              ..1..""",
+#
+#           """11111
+#              ....1
+#              11111
+#              1....
+#              11111""",
+#
+#           """11111
+#              ....1
+#              11111
+#              ....1
+#              11111""",
+#
+#           """1...1
+#              1...1
+#              11111
+#              ....1
+#              ....1""",
+#
+#           """11111
+#              1....
+#              11111
+#              ....1
+#              11111""",
+#
+#           """11111
+#              1....
+#              11111
+#              1...1
+#              11111""",
+#
+#           """11111
+#              ....1
+#              ....1
+#              ....1
+#              ....1""",
+#
+#           """11111
+#              1...1
+#              11111
+#              1...1
+#              11111""",
+#
+#           """11111
+#              1...1
+#              11111
+#              ....1
+#              11111"""]
+#
+#     def make_digit(raw_digit):
+#         return [1 if c == '1' else 0
+#                 for row in raw_digit.split("\n")
+#                 for c in row.strip()]
+#
+#     inputs = map(make_digit, raw_digits)
+#
+#     targets = [[1 if i == j else 0 for i in range(10)]
+#                for j in range(10)]
+#
+#     random.seed(0)   # to get repeatable results
+#     input_size = 25  # each input is a vector of length 25
+#     num_hidden = 5   # we'll have 5 neurons in the hidden layer
+#     output_size = 10 # we need 10 outputs for each input
+#
+#     # each hidden neuron has one weight per input, plus a bias weight
+#     hidden_layer = [[random.random() for __ in range(input_size + 1)]
+#                     for __ in range(num_hidden)]
+#
+#     # each output neuron has one weight per hidden neuron, plus a bias weight
+#     output_layer = [[random.random() for __ in range(num_hidden + 1)]
+#                     for __ in range(output_size)]
+#
+#     # the network starts out with random weights
+#     network = [hidden_layer, output_layer]
+#
+#     # 10,000 iterations seems enough to converge
+#     for __ in range(10000):
+#         for input_vector, target_vector in zip(inputs, targets):
+#             backpropagate(network, input_vector, target_vector)
+#
+#     def predict(input):
+#         return feed_forward(network, input)[-1]
+#
+#     for i, input in enumerate(inputs):
+#         outputs = predict(input)
+#         print i, [round(p,2) for p in outputs]
+#
+#     print """.@@@.
+# ...@@
+# ..@@.
+# ...@@
+# .@@@."""
+#     print [round(x, 2) for x in
+#           predict(  [0,1,1,1,0,  # .@@@.
+#                      0,0,0,1,1,  # ...@@
+#                      0,0,1,1,0,  # ..@@.
+#                      0,0,0,1,1,  # ...@@
+#                      0,1,1,1,0]) # .@@@.
+#           ]
+#     print
+#
+#     print """.@@@.
+# @..@@
+# .@@@.
+# @..@@
+# .@@@."""
+#     print [round(x, 2) for x in
+#           predict(  [0,1,1,1,0,  # .@@@.
+#                      1,0,0,1,1,  # @..@@
+#                      0,1,1,1,0,  # .@@@.
+#                      1,0,0,1,1,  # @..@@
+#                      0,1,1,1,0]) # .@@@.
+#           ]
+#     print
+#
     
