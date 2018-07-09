@@ -59,6 +59,7 @@ def backpropagate(network, input_vector, target):
     hidden_outputs, outputs = feed_forward(network, input_vector)
 
     # the output * (1 - output) is from the derivative of sigmoid
+    #类似逻辑回归的导数计算
     output_deltas = [output * (1 - output) * (output - target[i])
                      for i, output in enumerate(outputs)]
 
@@ -125,66 +126,66 @@ if __name__ == "__main__":
     # 数字识别
     raw_digits = [
         """11111
-           1...1
-           1...1
-           1...1
-           11111""",
+          1...1
+          1...1
+          1...1
+          11111""",
 
         """..1..
-           ..1..
-           ..1..
-           ..1..
-           ..1..""",
+          ..1..
+          ..1..
+          ..1..
+          ..1..""",
 
         """11111
-           ....1
-           11111
-           1....
-           11111""",
+          ....1
+          11111
+          1....
+          11111""",
 
         """11111
-           ....1
-           11111
-           ....1
-           11111""",
+          ....1
+          11111
+          ....1
+          11111""",
 
         """1...1
-           1...1
-           11111
-           ....1
-           ....1""",
+          1...1
+          11111
+          ....1
+          ....1""",
 
         """11111
-           1....
-           11111
-           ....1
-           11111""",
+          1....
+          11111
+          ....1
+          11111""",
 
         """11111
-           1....
-           11111
-           1...1
-           11111""",
+          1....
+          11111
+          1...1
+          11111""",
 
         """11111
-           ....1
-           ....1
-           ....1
-           ....1""",
+          ....1
+          ....1
+          ....1
+          ....1""",
 
         """11111
-           1...1
-           11111
-           1...1
-           11111""",
+          1...1
+          11111
+          1...1
+          11111""",
 
         """11111
-           1...1
-           11111
-           ....1
-           11111"""]
+          1...1
+          11111
+          ....1
+          11111"""]
 
-
+    #将数据扁平化成数组
     def make_digit(raw_digit):
         return [1 if c == '1' else 0
                 for row in raw_digit.split("\n")
@@ -193,23 +194,28 @@ if __name__ == "__main__":
 
     inputs = map(make_digit, raw_digits)
 
+    #定义结果,类似对角线矩阵
     targets = [[1 if i == j else 0 for i in range(10)]
                for j in range(10)]
 
+
     random.seed(0)  # to get repeatable results
     input_size = 25  # each input is a vector of length 25
-    num_hidden = 5  # we'll have 5 neurons in the hidden layer
-    output_size = 10  # we need 10 outputs for each input
+    num_hidden = 5  # we'll have 5 neurons in the hidden layer(每层五个神经元)
+    output_size = 10  # we need 10 outputs for each input(每层输出10个结果)
 
     # each hidden neuron has one weight per input, plus a bias weight
+    #初始化随机隐藏层
     hidden_layer = [[random.random() for __ in range(input_size + 1)]
                     for __ in range(num_hidden)]
 
     # each output neuron has one weight per hidden neuron, plus a bias weight
+    #初始化每层输出,随机生成
     output_layer = [[random.random() for __ in range(num_hidden + 1)]
                     for __ in range(output_size)]
 
     # the network starts out with random weights
+    #初始化网络,随机隐藏层,随机输出层
     network = [hidden_layer, output_layer]
 
     # 10,000 iterations seems enough to converge
