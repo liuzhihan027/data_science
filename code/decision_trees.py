@@ -176,6 +176,27 @@ if __name__ == "__main__":
     tree = build_tree_id3(inputs)
     print tree
 
+    # (
+    #     'level', {
+    #         'Senior': (
+    #             'tweets', {
+    #                 'yes': True,
+    #                 None: False,
+    #                 'no': False
+    #             }
+    #         ),
+    #         None: True,
+    #         'Mid': True,
+    #         'Junior': (
+    #             'phd', {
+    #                 'yes': False,
+    #                 None: True,
+    #                 'no': True
+    #             }
+    #         )
+    #     }
+    # )
+
     print "分类测试1"
     print "Junior / Java / tweets / no phd", classify(tree, 
         { "level" : "Junior", 

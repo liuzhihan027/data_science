@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 from collections import Counter
 from functools import partial
@@ -89,6 +91,8 @@ def show_weights(neuron_idx):
                 ax.add_patch(patch(j, i, '\\', "black"))
     plt.show()
 
+
+#算法应用
 if __name__ == "__main__":
 
     raw_digits = [
