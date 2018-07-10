@@ -55,25 +55,27 @@ def feed_forward(neural_network, input_vector):
 
 # 反向传播(网络,输入值,目标值)
 def backpropagate(network, input_vector, target):
-
     hidden_outputs, outputs = feed_forward(network, input_vector)
 
     # the output * (1 - output) is from the derivative of sigmoid
-    #类似逻辑回归的导数计算
+    # 类似逻辑回归的导数计算
     output_deltas = [output * (1 - output) * (output - target[i])
                      for i, output in enumerate(outputs)]
 
     # adjust weights for output layer (network[-1])
+    # 调整输出层的权重
     for i, output_neuron in enumerate(network[-1]):
         for j, hidden_output in enumerate(hidden_outputs + [1]):
             output_neuron[j] -= output_deltas[i] * hidden_output
 
     # back-propagate errors to hidden layer
+    # 向隐藏层反向传播误差
     hidden_deltas = [hidden_output * (1 - hidden_output) *
                      dot(output_deltas, [n[i] for n in network[-1]])
                      for i, hidden_output in enumerate(hidden_outputs)]
 
     # adjust weights for hidden layer (network[0])
+    # 调整隐藏层的权重（网络〔0〕）
     for i, hidden_neuron in enumerate(network[0]):
         for j, input in enumerate(input_vector + [1]):
             hidden_neuron[j] -= hidden_deltas[i] * input
@@ -109,6 +111,8 @@ def show_weights(neuron_idx):
     plt.show()
 
 
+
+
 # 算法应用
 if __name__ == "__main__":
 
@@ -126,22 +130,22 @@ if __name__ == "__main__":
     # 数字识别
     raw_digits = [
         """11111
-          1...1
-          1...1
-          1...1
-          11111""",
+           1...1
+           1...1
+           1...1
+           11111""",
 
         """..1..
-          ..1..
-          ..1..
-          ..1..
-          ..1..""",
+           ..1..
+           ..1..
+           ..1..
+           ..1..""",
 
         """11111
-          ....1
-          11111
-          1....
-          11111""",
+           ....1
+           11111
+           1....
+           11111""",
 
         """11111
           ....1
@@ -185,7 +189,8 @@ if __name__ == "__main__":
           ....1
           11111"""]
 
-    #将数据扁平化成数组
+
+    # 将数据扁平化成数组
     def make_digit(raw_digit):
         return [1 if c == '1' else 0
                 for row in raw_digit.split("\n")
@@ -194,10 +199,9 @@ if __name__ == "__main__":
 
     inputs = map(make_digit, raw_digits)
 
-    #定义结果,类似对角线矩阵
+    # 定义结果,类似对角线矩阵
     targets = [[1 if i == j else 0 for i in range(10)]
                for j in range(10)]
-
 
     random.seed(0)  # to get repeatable results
     input_size = 25  # each input is a vector of length 25
@@ -205,20 +209,21 @@ if __name__ == "__main__":
     output_size = 10  # we need 10 outputs for each input(每层输出10个结果)
 
     # each hidden neuron has one weight per input, plus a bias weight
-    #初始化随机隐藏层
+    # 初始化随机隐藏层
     hidden_layer = [[random.random() for __ in range(input_size + 1)]
                     for __ in range(num_hidden)]
 
     # each output neuron has one weight per hidden neuron, plus a bias weight
-    #初始化每层输出,随机生成
+    # 初始化每层输出,随机生成
     output_layer = [[random.random() for __ in range(num_hidden + 1)]
                     for __ in range(output_size)]
 
     # the network starts out with random weights
-    #初始化网络,随机隐藏层,随机输出层
+    # 初始化网络,随机隐藏层,随机输出层
     network = [hidden_layer, output_layer]
 
     # 10,000 iterations seems enough to converge
+    # 10000次的迭代使其收敛
     for __ in range(10000):
         for input_vector, target_vector in zip(inputs, targets):
             backpropagate(network, input_vector, target_vector)
@@ -259,3 +264,6 @@ if __name__ == "__main__":
                     0, 1, 1, 1, 0])  # .@@@.
            ]
     print
+
+    for i in range(4):
+        show_weights(i)
