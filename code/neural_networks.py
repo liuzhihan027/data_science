@@ -55,10 +55,12 @@ def feed_forward(neural_network, input_vector):
 
 # 反向传播(网络,输入值,目标值)
 def backpropagate(network, input_vector, target):
+
+    # 正向传播得到结果
     hidden_outputs, outputs = feed_forward(network, input_vector)
 
     # the output * (1 - output) is from the derivative of sigmoid
-    # 类似逻辑回归的导数计算
+    # 输出层的误差
     output_deltas = [output * (1 - output) * (output - target[i])
                      for i, output in enumerate(outputs)]
 
@@ -69,13 +71,13 @@ def backpropagate(network, input_vector, target):
             output_neuron[j] -= output_deltas[i] * hidden_output
 
     # back-propagate errors to hidden layer
-    # 向隐藏层反向传播误差
+    # 向隐藏层反向传播误差(隐藏层误差)
     hidden_deltas = [hidden_output * (1 - hidden_output) *
                      dot(output_deltas, [n[i] for n in network[-1]])
                      for i, hidden_output in enumerate(hidden_outputs)]
 
     # adjust weights for hidden layer (network[0])
-    # 调整隐藏层的权重（网络〔0〕）
+    # 调整隐藏层的权重
     for i, hidden_neuron in enumerate(network[0]):
         for j, input in enumerate(input_vector + [1]):
             hidden_neuron[j] -= hidden_deltas[i] * input
@@ -223,12 +225,13 @@ if __name__ == "__main__":
     network = [hidden_layer, output_layer]
 
     # 10,000 iterations seems enough to converge
-    # 10000次的迭代使其收敛
+    # 10000次的迭代,认为能够收敛
     for __ in range(10000):
         for input_vector, target_vector in zip(inputs, targets):
             backpropagate(network, input_vector, target_vector)
 
 
+    # 正向传播得到最终结果
     def predict(input):
         return feed_forward(network, input)[-1]
 
