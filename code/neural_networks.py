@@ -82,14 +82,14 @@ def backpropagate(network, input_vector, target):
         for j, input in enumerate(input_vector + [1]):
             hidden_neuron[j] -= hidden_deltas[i] * input
 
-
+# 画图展示权重(方格图构建)
 def patch(x, y, hatch, color):
     """return a matplotlib 'patch' object with the specified
     location, crosshatch pattern, and color"""
     return matplotlib.patches.Rectangle((x - 0.5, y - 0.5), 1, 1,
                                         hatch=hatch, fill=False, color=color)
 
-
+# 展示权重
 def show_weights(neuron_idx):
     weights = network[0][neuron_idx]
     abs_weights = map(abs, weights)
@@ -229,6 +229,9 @@ if __name__ == "__main__":
     for __ in range(10000):
         for input_vector, target_vector in zip(inputs, targets):
             backpropagate(network, input_vector, target_vector)
+
+    # 展示权重
+    print network
 
 
     # 正向传播得到最终结果
