@@ -56,6 +56,7 @@ def magnitude(v):
     return math.sqrt(sum_of_squares(v))
 
 
+# 距离的平方
 def squared_distance(v, w):
     return sum_of_squares(vector_subtract(v, w))
 

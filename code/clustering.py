@@ -1,28 +1,40 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 from linear_algebra import squared_distance, vector_mean, distance
 import math, random
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
+# k_means主类
 class KMeans:
     """performs k-means clustering"""
 
+    # 初始化参数
     def __init__(self, k):
         self.k = k          # number of clusters
         self.means = None   # means of clusters
-        
+
+    # 分类(返回单个点到每一个中心的距离,取距离最近的点即中心点返回中心点的索引)
     def classify(self, input):
         """return the index of the cluster closest to the input"""
+        # min(range(self.k)--定位后面的i的取值,key=lambda i: squared_distance(input, self.means[i]))--对每个key取最小值
+
+
         return min(range(self.k),
                    key=lambda i: squared_distance(input, self.means[i]))
-                   
+
+    # 训练
     def train(self, inputs):
-    
+
+        # 选取随机的k个值,为初始中心值
         self.means = random.sample(inputs, self.k)
         assignments = None
+
         
         while True:
             # Find new assignments
+            # 所有点对应的索引集合
             new_assignments = map(self.classify, inputs)
 
             # If no assignments have changed, we're done.
@@ -35,6 +47,7 @@ class KMeans:
             for i in range(self.k):
                 i_points = [p for p, a in zip(inputs, assignments) if a == i]
                 # avoid divide-by-zero if i_points is empty
+                # 防止空串,更新第i个中心点
                 if i_points:                                
                     self.means[i] = vector_mean(i_points)    
 
@@ -167,36 +180,36 @@ if __name__ == "__main__":
     random.seed(0) # so you get the same results as me
     clusterer = KMeans(3)
     clusterer.train(inputs)
-    print "3-means:"
-    print clusterer.means
-    print
+    # print "3-means:"
+    # print clusterer.means
+    # print
 
-    random.seed(0)
-    clusterer = KMeans(2)
-    clusterer.train(inputs)
-    print "2-means:"
-    print clusterer.means
-    print
-
-    print "errors as a function of k"
-
-    for k in range(1, len(inputs) + 1):
-        print k, squared_clustering_errors(inputs, k)
-    print
-
-
-    print "bottom up hierarchical clustering"
-
-    base_cluster = bottom_up_cluster(inputs)
-    print base_cluster
-
-    print
-    print "three clusters, min:"
-    for cluster in generate_clusters(base_cluster, 3):
-        print get_values(cluster)
-
-    print
-    print "three clusters, max:"
-    base_cluster = bottom_up_cluster(inputs, max)
-    for cluster in generate_clusters(base_cluster, 3):
-        print get_values(cluster)
+    # random.seed(0)
+    # clusterer = KMeans(2)
+    # clusterer.train(inputs)
+    # print "2-means:"
+    # print clusterer.means
+    # print
+    #
+    # print "errors as a function of k"
+    #
+    # for k in range(1, len(inputs) + 1):
+    #     print k, squared_clustering_errors(inputs, k)
+    # print
+    #
+    #
+    # print "bottom up hierarchical clustering"
+    #
+    # base_cluster = bottom_up_cluster(inputs)
+    # print base_cluster
+    #
+    # print
+    # print "three clusters, min:"
+    # for cluster in generate_clusters(base_cluster, 3):
+    #     print get_values(cluster)
+    #
+    # print
+    # print "three clusters, max:"
+    # base_cluster = bottom_up_cluster(inputs, max)
+    # for cluster in generate_clusters(base_cluster, 3):
+    #     print get_values(cluster)
