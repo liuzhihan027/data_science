@@ -48,9 +48,11 @@ class KMeans:
                 i_points = [p for p, a in zip(inputs, assignments) if a == i]
                 # avoid divide-by-zero if i_points is empty
                 # 防止空串,更新第i个中心点
-                if i_points:                                
+                if i_points:
+                    # 属性内的全部点的矢量和的均值来更新中心点
                     self.means[i] = vector_mean(i_points)    
 
+# 全部点距离中心点的距离的和(整体误差)
 def squared_clustering_errors(inputs, k):
     """finds the total squared error from k-means clustering the inputs"""
     clusterer = KMeans(k)
@@ -96,6 +98,7 @@ def recolor_image(input_file, k=5):
 
 #
 # hierarchical clustering
+# 层次聚类
 #
 
 def is_leaf(cluster):
@@ -180,28 +183,30 @@ if __name__ == "__main__":
     random.seed(0) # so you get the same results as me
     clusterer = KMeans(3)
     clusterer.train(inputs)
-    # print "3-means:"
-    # print clusterer.means
-    # print
+    print "3-means:"
+    print clusterer.means
+    print
 
-    # random.seed(0)
-    # clusterer = KMeans(2)
-    # clusterer.train(inputs)
-    # print "2-means:"
-    # print clusterer.means
-    # print
-    #
-    # print "errors as a function of k"
-    #
-    # for k in range(1, len(inputs) + 1):
-    #     print k, squared_clustering_errors(inputs, k)
-    # print
-    #
-    #
-    # print "bottom up hierarchical clustering"
-    #
-    # base_cluster = bottom_up_cluster(inputs)
-    # print base_cluster
+    random.seed(0)
+    clusterer = KMeans(2)
+    clusterer.train(inputs)
+    print "2-means:"
+    print clusterer.means
+    print
+
+    # 获取全部k得出的误差,寻找拐点
+    print "errors as a function of k"
+
+    for k in range(1, len(inputs) + 1):
+        print k, squared_clustering_errors(inputs, k)
+    print
+
+
+    print "bottom up hierarchical clustering"
+    # 自下向上层次聚类
+
+    base_cluster = bottom_up_cluster(inputs)
+    print base_cluster
     #
     # print
     # print "three clusters, min:"
