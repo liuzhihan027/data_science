@@ -138,7 +138,7 @@ def get_values(cluster):
                 for value in get_values(child)]
 
 
-# 聚类的距离
+# 两个簇的距离(指定使用min和max函数)
 def cluster_distance(cluster1, cluster2, distance_agg=min):
     """finds the aggregate distance between elements of cluster1
     and elements of cluster2"""
@@ -168,10 +168,13 @@ def bottom_up_cluster(inputs, distance_agg=min):
                       for cluster2 in clusters[:i]],
                      key=lambda (x, y): cluster_distance(x, y, distance_agg))
 
+
         # remove them from the list of clusters
+        # 排除两个已经因为最近而合并的两个簇
         clusters = [c for c in clusters if c != c1 and c != c2]
 
         # merge them, using merge_order = # of clusters left
+        # 将两个簇使用数组整合,添加到整体大簇中
         merged_cluster = (len(clusters), [c1, c2])
 
         # and add their merge
@@ -180,18 +183,22 @@ def bottom_up_cluster(inputs, distance_agg=min):
     # when there's only one cluster left, return it
     return clusters[0]
 
-
+# 生成簇
 def generate_clusters(base_cluster, num_clusters):
     # start with a list with just the base cluster
     clusters = [base_cluster]
 
     # as long as we don't have enough clusters yet...
+    # 如果生成簇比定义簇大,跳出循环
     while len(clusters) < num_clusters:
         # choose the last-merged of our clusters
+        # 寻找下一层簇(即下一层全部数据中分簇数最少的)
         next_cluster = min(clusters, key=get_merge_order)
         # remove it from the list
+        # 将取出的簇从整体簇中移除(移除当前分割最小簇数)
         clusters = [c for c in clusters if c != next_cluster]
         # and add its children to the list (i.e., unmerge it)
+        # 将取出的簇的孩子节点添加到list中
         clusters.extend(get_children(next_cluster))
 
     # once we have enough clusters...
@@ -234,16 +241,19 @@ if __name__ == "__main__":
     print "bottom up hierarchical clustering"
     # 自下向上层次聚类
 
+    # 全层次聚类,生成树状结构
     base_cluster = bottom_up_cluster(inputs)
     print base_cluster
 
     print
     print "three clusters, min:"
+    # 使用最短距离,层次聚类
     for cluster in generate_clusters(base_cluster, 3):
         print get_values(cluster)
 
     print
     print "three clusters, max:"
+    # 使用最大距离,层次聚类
     base_cluster = bottom_up_cluster(inputs, max)
     for cluster in generate_clusters(base_cluster, 3):
         print get_values(cluster)
