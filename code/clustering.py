@@ -12,8 +12,8 @@ class KMeans:
 
     # 初始化参数
     def __init__(self, k):
-        self.k = k          # number of clusters
-        self.means = None   # means of clusters
+        self.k = k          # number of clusters(聚类中心个数)
+        self.means = None   # means of clusters(聚类中心)
 
     # 分类(返回单个点到每一个中心的距离,取距离最近的点即中心点返回中心点的索引)
     def classify(self, input):
@@ -63,6 +63,7 @@ def squared_clustering_errors(inputs, k):
     return sum(squared_distance(input,means[cluster])
                for input, cluster in zip(inputs, assignments))
 
+# 画出不同k值得到的聚类中心的误差的趋势
 def plot_squared_clustering_errors(plt):
 
     ks = range(1, len(inputs) + 1)
@@ -76,6 +77,7 @@ def plot_squared_clustering_errors(plt):
 
 #
 # using clustering to recolor an image
+# 用聚类法重建图像
 #
 
 def recolor_image(input_file, k=5):
@@ -200,6 +202,39 @@ if __name__ == "__main__":
     for k in range(1, len(inputs) + 1):
         print k, squared_clustering_errors(inputs, k)
     print
+
+    # 画出不同k值聚类的总误差趋势
+    plot_squared_clustering_errors(plt)
+
+    # 图像聚类
+    # 将路径下图像装载成数组
+    # img[i][j]表示第i行第j列的像素
+    path_to_png_file = r"image.png"
+    import matplotlib.image as mping
+    img = mping.imread( path_to_png_file )
+
+    top_row = img[0]
+    top_left_pixel = top_row[0]
+    print top_left_pixel
+    red,green,blue,aa = top_left_pixel
+
+    # 将像素数据扁平化
+    pixels = [pixel for row in img for pixel in row]
+    clusterer = KMeans(5) # 设定参数
+    clusterer.train(pixels) # 迭代寻找聚类中心(很慢!很慢!很慢!)
+
+    # 使用聚类中心对数据进行分类
+    def recolor(pixel):
+        cluster = clusterer.classify(pixel)
+        return clusterer.means[cluster]
+
+    # 按行进行处理
+    new_img = [[recolor(pixel) for pixel in row] for row in img]
+
+    plt.imshow(new_img)
+    plt.axis('off')
+    plt.show()
+
 
 
     print "bottom up hierarchical clustering"
