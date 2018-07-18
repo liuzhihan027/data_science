@@ -7,6 +7,8 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
 
+#https://blog.csdn.net/u012500237/article/details/65437525
+
 # k_means主类
 class KMeans:
     """performs k-means clustering"""
