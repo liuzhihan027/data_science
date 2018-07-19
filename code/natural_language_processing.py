@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 import math, random, re
 from collections import defaultdict, Counter
