@@ -140,7 +140,7 @@ def get_values(cluster):
                 for value in get_values(child)]
 
 
-# 两个簇的距离(指定使用min和max函数)
+# 两个簇的距离(指定使用min和max函数指定簇最远距离为簇的距离还是簇最近距离为簇的距离)
 def cluster_distance(cluster1, cluster2, distance_agg=min):
     """finds the aggregate distance between elements of cluster1
     and elements of cluster2"""
@@ -249,13 +249,13 @@ if __name__ == "__main__":
 
     print
     print "three clusters, min:"
-    # 使用最短距离,层次聚类
+    # 使用最短距离为簇距离,层次聚类
     for cluster in generate_clusters(base_cluster, 3):
         print get_values(cluster)
 
     print
     print "three clusters, max:"
-    # 使用最大距离,层次聚类
+    # 使用最大距离为簇距离,层次聚类
     base_cluster = bottom_up_cluster(inputs, max)
     for cluster in generate_clusters(base_cluster, 3):
         print get_values(cluster)
