@@ -5,7 +5,9 @@ import math, random, re
 from collections import defaultdict, Counter
 from bs4 import BeautifulSoup
 import requests
+import matplotlib.pyplot as plt
 
+# 根据坐标判定其重要性的词云展示
 def plot_resumes(plt):
     data = [ ("big data", 100, 15), ("Hadoop", 95, 25), ("Python", 75, 50),
          ("R", 50, 40), ("machine learning", 80, 20), ("statistics", 20, 60),
@@ -32,9 +34,11 @@ def plot_resumes(plt):
 # n-gram models
 #
 
+# 爬取的字符异常处理
 def fix_unicode(text):
     return text.replace(u"\u2019", "'")
 
+# 从制定网址爬取数据,将每个单词放进数组,返回网页全部单词的巨大数组
 def get_document():
 
     url = "http://radar.oreilly.com/2010/06/what-is-data-science.html"
@@ -53,55 +57,73 @@ def get_document():
 
     return document
 
+# 二院代数(输入字典list)
 def generate_using_bigrams(transitions):
+    # 按"."的下一个单词作为一句话的起始单词
     current = "."   # this means the next word will start a sentence
     result = []
     while True:
+        # 从单词表中选取下一个单词的列表
         next_word_candidates = transitions[current]    # bigrams (current, _)
+        # 从起始单词的列表中随机选择一个单词
         current = random.choice(next_word_candidates)  # choose one at random
         result.append(current)                         # append it to results
         if current == ".": return " ".join(result)     # if "." we're done
 
+# 三元语法
 def generate_using_trigrams(starts, trigram_transitions):
+    # 随机选择一个起始单词
     current = random.choice(starts)   # choose a random starting word
     prev = "."                        # and precede it with a '.'
     result = [current]
     while True:
+        # 获取已知前两个单词的后一个单词的列表
         next_word_candidates = trigram_transitions[(prev, current)]
+        # 随机选择一个单词作为下一个单词
         next = random.choice(next_word_candidates)
 
         prev, current = current, next
         result.append(current)
-
+        # 设置截断点
         if current == ".":
             return " ".join(result)
 
+# 判断是否为终端
 def is_terminal(token):
     return token[0] != "_"
 
+# 扩大(递归)
 def expand(grammar, tokens):
     for i, token in enumerate(tokens):
-
         # ignore terminals
+        # 如果为具体单词时跳出本次循环
         if is_terminal(token): continue
 
+
         # choose a replacement at random
+        # 非具体单词,从语法表中选取其对应的分词(可能是具体单词可能是终端语法)
         replacement = random.choice(grammar[token])
 
+        # 如果随机选取的分词为正常单词:直接使用正常单词添加数组,如果非正常单词则将其位置替换成其对应的分词(可能是具体单词可能是终端语法)
+        # 如果发现非终端符号,随机选择替代者
         if is_terminal(replacement):
             tokens[i] = replacement
         else:
             tokens = tokens[:i] + replacement.split() + tokens[(i+1):]
+        # 递归
         return expand(grammar, tokens)
 
     # if we get here we had all terminals and are done
+    # 直到递归到全部为有效字符时返回最终数组
     return tokens
 
+# 使用语法生成句子
 def generate_sentence(grammar):
     return expand(grammar, ["_S"])
 
 #
 # Gibbs Sampling
+# 吉布斯采样
 #
 
 def roll_a_die():
@@ -244,21 +266,30 @@ for iter in range(1000):
 
 if __name__ == "__main__":
 
+    # 根据坐标判定其重要性的词云展示
+    plot_resumes(plt)
+
+    # 根据指定网址获取其全部单词组成的数组
     document = get_document()
 
+    # 将全部词语错开整合,整合成(单词,下一个单词)
     bigrams = zip(document, document[1:])
     transitions = defaultdict(list)
     for prev, current in bigrams:
         transitions[prev].append(current)
 
     random.seed(0)
-    print "bigram sentences"
+    print "bigram sentences"# 双二元语法
+    # 导入字段list
     for i in range(10):
+        # 全部根据下一个单词来逐步添加单词形成新的句子,随机的
         print i, generate_using_bigrams(transitions)
     print
 
     # trigrams
+    # 三元语法
 
+    # 获取连续的两个单词
     trigrams = zip(document, document[1:], document[2:])
     trigram_transitions = defaultdict(list)
     starts = []
@@ -272,9 +303,12 @@ if __name__ == "__main__":
 
     print "trigram sentences"
     for i in range(10):
+        # 输入起始语句列表,以及字典list(key为两个连续的单词,value为每句话含有这个单词顺序的后一个单词的列表)
         print i, generate_using_trigrams(starts, trigram_transitions)
     print
 
+    # 使用语法来生成句子
+    # 定义语法规则
     grammar = {
         "_S"  : ["_NP _VP"],
         "_NP" : ["_N",
