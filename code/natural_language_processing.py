@@ -126,18 +126,22 @@ def generate_sentence(grammar):
 # 吉布斯采样
 #
 
+# 投骰子,得到一个随机数
 def roll_a_die():
     return random.choice([1,2,3,4,5,6])
 
+# 返回(第一次获取的点数,两次点数之和)
 def direct_sample():
     d1 = roll_a_die()
     d2 = roll_a_die()
     return d1, d1 + d2
 
+# 输入第一次得到的点数,返回随机的两次点数之和
 def random_y_given_x(x):
     """equally likely to be x + 1, x + 2, ... , x + 6"""
     return x + roll_a_die()
 
+# 输入两次点数之和,随机返回第一次点数的取值
 def random_x_given_y(y):
     if y <= 7:
         # if the total is 7 or less, the first die is equally likely to be
@@ -148,13 +152,18 @@ def random_x_given_y(y):
         # (total - 6), (total - 5), ..., 6
         return random.randrange(y - 6, 7)
 
+# gibbs采样
 def gibbs_sample(num_iters=100):
+    # 值初始化
     x, y = 1, 2 # doesn't really matter
+
+    # 根据计算次数(迭代次数不断更新x,y取值,最后返回结果)
     for _ in range(num_iters):
         x = random_x_given_y(y)
         y = random_y_given_x(x)
     return x, y
 
+# 直接取值同gibbs采样取值对比
 def compare_distributions(num_samples=1000):
     counts = defaultdict(lambda: [0, 0])
     for _ in range(num_samples):
@@ -333,6 +342,7 @@ if __name__ == "__main__":
 
 
     # topic MODELING
+    # 主题建模
 
     for k, word_counts in enumerate(topic_word_counts):
         for word, count in word_counts.most_common():
