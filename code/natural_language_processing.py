@@ -405,6 +405,7 @@ if __name__ == "__main__":
                    "databases",
                    "machine learning"]
 
+
     # 整合文章和文章中的主体的数据量
     for document, topic_counts in zip(documents, document_topic_counts):
         print document
