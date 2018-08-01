@@ -8,6 +8,9 @@ import requests
 import matplotlib.pyplot as plt
 
 # 根据坐标判定其重要性的词云展示
+from typing import List, Any, Union
+
+
 def plot_resumes(plt):
     data = [ ("big data", 100, 15), ("Hadoop", 95, 25), ("Python", 75, 50),
          ("R", 50, 40), ("machine learning", 80, 20), ("statistics", 20, 60),
@@ -173,11 +176,17 @@ def compare_distributions(num_samples=1000):
 
 #
 # TOPIC MODELING
+# 主题建模
 #
 
 def sample_from(weights):
+
+    # 权重和
     total = sum(weights)
+    # 随机选择权重和范围内权重
     rnd = total * random.random()       # uniform between 0 and total
+
+    # 遍历给定权重,如果随机选择的权重小于等于原始给定的权重,返回原始权重的位置,即主题序号
     for i, w in enumerate(weights):
         rnd -= w                        # return the smallest i such that
         if rnd <= 0: return i           # sum(weights[:(i+1)]) >= rnd
@@ -202,20 +211,33 @@ documents = [
 
 K = 4
 
+# 计数列表,每个文档一个列表
 document_topic_counts = [Counter()
                          for _ in documents]
 
+
+# 计数列表,每个主题一个列表
 topic_word_counts = [Counter() for _ in range(K)]
 
+# 数字的一个列表,每个主题一个列表
 topic_counts = [0 for _ in range(K)]
 
+# 获取每个文章的长度
 document_lengths = map(len, documents)
 
+
+# 统计不同单词的数量
 distinct_words = set(word for document in documents for word in document)
+
+# 单词去重个数
 W = len(distinct_words)
 
+# 文章的个数
 D = len(documents)
 
+
+
+# 输入主题和文档序号,(文档中当前主题的数据量<平滑>/当前的文档长度<平滑>)
 def p_topic_given_document(topic, d, alpha=0.1):
     """the fraction of words in document _d_
     that are assigned to _topic_ (plus some smoothing)"""
@@ -223,6 +245,9 @@ def p_topic_given_document(topic, d, alpha=0.1):
     return ((document_topic_counts[d][topic] + alpha) /
             (document_lengths[d] + K * alpha))
 
+
+
+# 输入单词和主题序号,(当前主题下的当前单词的数据量<平滑>/主题下全部的数据量<平滑>/)
 def p_word_given_topic(word, topic, beta=0.1):
     """the fraction of words assigned to _topic_
     that equal _word_ (plus some smoothing)"""
@@ -230,27 +255,41 @@ def p_word_given_topic(word, topic, beta=0.1):
     return ((topic_word_counts[topic][word] + beta) /
             (topic_counts[topic] + W * beta))
 
+# 输入文章序号,单词,和主题序号
 def topic_weight(d, word, k):
     """given a document and a word in that document,
     return the weight for the k-th topic"""
-
+    # (文档中当前主题的数据量<平滑>/当前的文档长度<平滑>) * (当前主题下的当前单词的数据量<平滑>/主题下全部的数据量<平滑>/)
     return p_word_given_topic(word, k) * p_topic_given_document(k, d)
 
+# 选择一个新的主题(输入:文档序号,单词)
 def choose_new_topic(d, word):
     return sample_from([topic_weight(d, word, k)
                         for k in range(K)])
 
 
+
 random.seed(0)
+
+# 为每个单词随机分配文章主题
 document_topics = [[random.randrange(K) for word in document]
                    for document in documents]
 
+
+# 遍历文章的每一个单词,将基本数据填满
 for d in range(D):
     for word, topic in zip(documents[d], document_topics[d]):
+
+        # 第d个文章下的属于topic的主题加一
         document_topic_counts[d][topic] += 1
+        # 第topic的主题下的单词word出现次数加一
         topic_word_counts[topic][word] += 1
+        # 主题下数据量加一
         topic_counts[topic] += 1
 
+
+
+# 使用吉布斯采样的思想进行采样
 for iter in range(1000):
     for d in range(D):
         for i, (word, topic) in enumerate(zip(documents[d],
@@ -264,14 +303,19 @@ for iter in range(1000):
             document_lengths[d] -= 1
 
             # choose a new topic based on the weights
+            # 为当前文章的当前单词重新分配新的主题
             new_topic = choose_new_topic(d, word)
+            # 将新的主题关联到文章d的第i个位置即word所在的位置
             document_topics[d][i] = new_topic
 
             # and now add it back to the counts
+            # 将更新完主题的单词放回总体数据当中
             document_topic_counts[d][new_topic] += 1
             topic_word_counts[new_topic][word] += 1
             topic_counts[new_topic] += 1
             document_lengths[d] += 1
+
+
 
 if __name__ == "__main__":
 
@@ -335,7 +379,7 @@ if __name__ == "__main__":
         print i, " ".join(generate_sentence(grammar))
     print
 
-    print "gibbs sampling"
+    print "gibbs sampling"# 吉布斯采样
     comparison = compare_distributions()
     for roll, (gibbs, direct) in comparison.iteritems():
         print roll, gibbs, direct
@@ -344,18 +388,24 @@ if __name__ == "__main__":
     # topic MODELING
     # 主题建模
 
+    # 以下均为主题建模的展示阶段,真正运算阶段见上方函数
+
+    # 遍历每个主题下每个单词的出现次数
     for k, word_counts in enumerate(topic_word_counts):
+        # word_counts.most_common():返回一个topN的列表
         for word, count in word_counts.most_common():
             if count > 0: print k, word, count
 
+    # 定义主题名称
     topic_names = ["Big Data and programming languages",
                    "Python and statistics",
                    "databases",
                    "machine learning"]
 
+    # 整合文章和文章中的主体的数据量
     for document, topic_counts in zip(documents, document_topic_counts):
         print document
         for topic, count in topic_counts.most_common():
             if count > 0:
-                print topic_names[topic], count,
+                print topic_names[topic], count,'|',
         print
