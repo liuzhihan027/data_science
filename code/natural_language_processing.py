@@ -262,7 +262,7 @@ def p_word_given_topic(word, topic, beta=0.1):
 def topic_weight(d, word, k):
     """given a document and a word in that document,
     return the weight for the k-th topic"""
-    # (文档中当前主题的数据量<平滑>/当前的文档长度<平滑>) * (当前主题下的当前单词的数据量<平滑>/主题下全部的数据量<平滑>/)
+    # (当前主题下的当前单词的数据量<平滑>/主题下全部的数据量<平滑>/) * (文档中当前主题的数据量<平滑>/当前的文档长度<平滑>)
     return p_word_given_topic(word, k) * p_topic_given_document(k, d)
 
 # 选择一个新的主题(输入:文档序号,单词)
