@@ -60,7 +60,7 @@ def get_document():
 
     return document
 
-# 二院代数(输入字典list)
+# 二元代数(输入字典list)
 def generate_using_bigrams(transitions):
     # 按"."的下一个单词作为一句话的起始单词
     current = "."   # this means the next word will start a sentence
@@ -87,9 +87,11 @@ def generate_using_trigrams(starts, trigram_transitions):
 
         prev, current = current, next
         result.append(current)
-        # 设置截断点
+        # 设置截断点,终点
         if current == ".":
             return " ".join(result)
+
+# 使用语法生成句子
 
 # 判断是否为终端
 def is_terminal(token):
@@ -179,6 +181,7 @@ def compare_distributions(num_samples=1000):
 # 主题建模
 #
 
+# 权重随机采样
 def sample_from(weights):
 
     # 权重和
