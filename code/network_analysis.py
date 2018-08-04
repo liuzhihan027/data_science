@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 import math, random, re
 from collections import defaultdict, Counter, deque
+
+from typing import Dict, Union, List, Any
+
 from linear_algebra import dot, get_row, get_column, make_matrix, magnitude, scalar_multiply, shape, distance
 from functools import partial
 
+# 用户名称编号初始化
 users = [
     { "id": 0, "name": "Hero" },
     { "id": 1, "name": "Dunn" },
@@ -17,36 +23,48 @@ users = [
     { "id": 9, "name": "Klein" }
 ]
 
+# 相互关系元组
 friendships = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3), (3, 4),
                (4, 5), (5, 6), (5, 7), (6, 8), (7, 8), (8, 9)]
 
 # give each user a friends list
+# 初始化数组
 for user in users:
     user["friends"] = []
+
     
 # and populate it
+# 为每个用户添加其对应关系
 for i, j in friendships:
     # this works because users[i] is the user whose id is i
     users[i]["friends"].append(users[j]) # add i as a friend of j
-    users[j]["friends"].append(users[i]) # add j as a friend of i   
+    users[j]["friends"].append(users[i]) # add j as a friend of i
+
+
 
 # 
 # Betweenness Centrality
+# 中心度
 #
 
+# 输入用户名获取其和其他用户的最短距离,广度优先
 def shortest_paths_from(from_user):
     
     # a dictionary from "user_id" to *all* shortest paths to that user
+    # 初始化结果字典
     shortest_paths_to = { from_user["id"] : [[]] }
+
 
     # a queue of (previous user, next user) that we need to check.
     # starts out with all pairs (from_user, friend_of_from_user)
+    # 创建(用户,朋友)双向队列
     frontier = deque((from_user, friend)
                      for friend in from_user["friends"])
 
     # keep going until we empty the queue
     while frontier: 
 
+        # 不断从左侧取出,当前用户,用户朋友列表
         prev_user, user = frontier.popleft() # take from the beginning
         user_id = user["id"]
 
@@ -54,9 +72,11 @@ def shortest_paths_from(from_user):
         # necessarily we already know a shortest path to prev_user
         paths_to_prev = shortest_paths_to[prev_user["id"]]
         paths_via_prev = [path + [user_id] for path in paths_to_prev]
+
         
         # it's possible we already know a shortest path to here as well
         old_paths_to_here = shortest_paths_to.get(user_id, [])
+
         
         # what's the shortest path to here that we've seen so far?
         if old_paths_to_here:
@@ -65,20 +85,24 @@ def shortest_paths_from(from_user):
             min_path_length = float('inf')
                 
         # any new paths to here that aren't too long
+        # 找到新的路径较短的路径
         new_paths_to_here = [path_via_prev
                              for path_via_prev in paths_via_prev
                              if len(path_via_prev) <= min_path_length
                              and path_via_prev not in old_paths_to_here]
-        
+
+        # 数组叠加,原有的路径+新的路径
         shortest_paths_to[user_id] = old_paths_to_here + new_paths_to_here
         
         # add new neighbors to the frontier
+        # 将没有直接关系的新的用户id添加的队列中
         frontier.extend((user, friend)
                         for friend in user["friends"]
                         if friend["id"] not in shortest_paths_to)
 
     return shortest_paths_to
 
+# 对每个用户,新添加属性(最短路径)包含每个用户到替他任何用户的最短路径
 for user in users:
     user["shortest_paths"] = shortest_paths_from(user)
 
@@ -98,6 +122,7 @@ for source in users:
 
 #
 # closeness centrality
+# 中介中心度
 #
 
 def farness(user):
@@ -209,12 +234,12 @@ def page_rank(users, damping = 0.85, num_iters = 100):
 
 if __name__ == "__main__":
 
-    print "Betweenness Centrality"
+    print "Betweenness Centrality" # 中心度
     for user in users:
         print user["id"], user["betweenness_centrality"]
     print
 
-    print "Closeness Centrality"
+    print "Closeness Centrality" # 接近中心性
     for user in users:
         print user["id"], user["closeness_centrality"]
     print
