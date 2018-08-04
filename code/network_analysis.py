@@ -106,11 +106,15 @@ def shortest_paths_from(from_user):
 for user in users:
     user["shortest_paths"] = shortest_paths_from(user)
 
+# 初始化中介中心度
 for user in users:
     user["betweenness_centrality"] = 0.0
 
+# 遍历用户,及其路径,未每个最短路径经过的节点添加其中介中心度,全遍历,效率较低
 for source in users:
     source_id = source["id"]
+
+    # 遍历用户id和其到其他用户之间的最短路径
     for target_id, paths in source["shortest_paths"].iteritems():
         if source_id < target_id:   # don't double count
             num_paths = len(paths)  # how many shortest paths?
@@ -122,25 +126,30 @@ for source in users:
 
 #
 # closeness centrality
-# 中介中心度
+# 接近中心度(疏远度)
 #
 
+# 单个用户的接近中心度,即用户到其他用户路径的最小路径的长度和
 def farness(user):
     """the sum of the lengths of the shortest paths to each other user"""
     return sum(len(paths[0]) 
                for paths in user["shortest_paths"].values())
 
+# 为每个用户添加接近中心度值
 for user in users:
     user["closeness_centrality"] = 1 / farness(user)
 
 
 #
 # matrix multiplication
+# 特征向量中心度
 #
 
+# 矩阵乘法,单个因子计算
 def matrix_product_entry(A, B, i, j):
     return dot(get_row(A, i), get_column(B, j))
 
+# 矩阵乘法,输入两个矩阵
 def matrix_multiply(A, B):
     n1, k1 = shape(A)
     n2, k2 = shape(B)
@@ -149,19 +158,23 @@ def matrix_multiply(A, B):
                 
     return make_matrix(n1, k2, partial(matrix_product_entry, A, B))
 
+# 特征向量转化为矩阵
 def vector_as_matrix(v):
     """returns the vector v (represented as a list) as a n x 1 matrix"""
     return [[v_i] for v_i in v]
-    
+
+# 矩阵转化为特征向量
 def vector_from_matrix(v_as_matrix):
     """returns the n x 1 matrix as a list of values"""
     return [row[0] for row in v_as_matrix]
 
+# 矩阵运算,得到特征向量
 def matrix_operate(A, v):
     v_as_matrix = vector_as_matrix(v)
     product = matrix_multiply(A, v_as_matrix)
     return vector_from_matrix(product)
 
+# 随机选取特征向量,经过矩阵相乘计算调整,直到相乘得到的向量为单位向量,即收敛,此时的v就为矩阵A的特征向量
 def find_eigenvector(A, tolerance=0.00001):
     guess = [1 for __ in A]
 
