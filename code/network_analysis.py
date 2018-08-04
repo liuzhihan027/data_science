@@ -213,35 +213,43 @@ eigenvector_centralities, _ = find_eigenvector(adjacency_matrix)
 # directed graphs
 #
 
+# 有向图,(用户,用户的目标用户)
 endorsements = [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1), (1, 3),
                 (2, 3), (3, 4), (5, 4), (5, 6), (7, 5), (6, 8), (8, 7), (8, 9)]
 
+# 初始化用户和目标用户列表
 for user in users:
     user["endorses"] = []       # add one list to track outgoing endorsements
     user["endorsed_by"] = []    # and another to track endorsements
-    
+
+# 遍历有向图
 for source_id, target_id in endorsements:
     users[source_id]["endorses"].append(users[target_id])
     users[target_id]["endorsed_by"].append(users[source_id])
 
-
+# 每个用户被关注的人数
 endorsements_by_id = [(user["id"], len(user["endorsed_by"]))
                       for user in users]
 
-sorted(endorsements_by_id, 
+# 排序
+
+sorted(endorsements_by_id,
        key=lambda (user_id, num_endorsements): num_endorsements,
        reverse=True)
 
+# 详解见:https://www.cnblogs.com/rubinorth/p/5799848.html
 def page_rank(users, damping = 0.85, num_iters = 100):
     
     # initially distribute PageRank evenly
+    # 排名初始化,均匀的分布到各个点上
     num_users = len(users)
     pr = { user["id"] : 1 / num_users for user in users }
 
     # this is the small fraction of PageRank
     # that each node gets each iteration
     base_pr = (1 - damping) / num_users
-    
+
+    # 迭代100次
     for __ in range(num_iters):
         next_pr = { user["id"] : base_pr for user in users }
         for user in users:
