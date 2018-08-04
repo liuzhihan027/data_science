@@ -46,7 +46,7 @@ def dot(v, w):
     return sum(v_i * w_i for v_i, w_i in zip(v, w))
 
 
-# 求平方和
+# 向量平方
 def sum_of_squares(v):
     """v_1 * v_1 + ... + v_n * v_n"""
     return dot(v, v)
@@ -57,11 +57,11 @@ def magnitude(v):
     return math.sqrt(sum_of_squares(v))
 
 
-# 距离的平方
+# 两个向量距离的平方和
 def squared_distance(v, w):
     return sum_of_squares(vector_subtract(v, w))
 
-
+# 两个向量的距离
 def distance(v, w):
     return math.sqrt(squared_distance(v, w))
 
@@ -88,8 +88,6 @@ def get_column(A, j):
 
 #创建矩阵
 def make_matrix(num_rows, num_cols, entry_fn):
-    # type: (object, object, object) -> object
-    # type: (object, object, object) -> object
     """returns a num_rows x num_cols matrix 
     whose (i,j)-th entry is entry_fn(i, j)"""
     return [[entry_fn(i, j) for j in range(num_cols)]

@@ -174,15 +174,20 @@ def matrix_operate(A, v):
     product = matrix_multiply(A, v_as_matrix)
     return vector_from_matrix(product)
 
-# 随机选取特征向量,经过矩阵相乘计算调整,直到相乘得到的向量为单位向量,即收敛,此时的v就为矩阵A的特征向量
+# 随机选取特征向量,经过矩阵相乘计算调整,直到相乘得到的向量为单位向量,即收敛,此时的v就为矩阵A的特征向量(Ax=lamudax)
 def find_eigenvector(A, tolerance=0.00001):
     guess = [1 for __ in A]
 
     while True:
+        # 计算结果向量
         result = matrix_operate(A, guess)
+        # 向量的模
         length = magnitude(result)
+
+        # 下一个向量,标量(1/length)和向量(result)的乘法,
         next_guess = scalar_multiply(1/length, result)
-        
+
+        # 两个向量的距离小于某个阙值则返回更新后的向量和向量的模
         if distance(guess, next_guess) < tolerance:
             return next_guess, length # eigenvector, eigenvalue
         
@@ -190,14 +195,18 @@ def find_eigenvector(A, tolerance=0.00001):
 
 #
 # eigenvector centrality
+# 特征向量中心度
 #
 
+# 判断两个用户是否有联系
 def entry_fn(i, j):
     return 1 if (i, j) in friendships or (j, i) in friendships else 0
 
+# 建立关系矩阵
 n = len(users)
 adjacency_matrix = make_matrix(n, n, entry_fn)
 
+# 获取特征向量
 eigenvector_centralities, _ = find_eigenvector(adjacency_matrix)
 
 #
