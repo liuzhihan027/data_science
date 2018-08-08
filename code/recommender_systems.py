@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 import math, random
 from collections import defaultdict, Counter
 from linear_algebra import dot
 
+# 基本数据
 users_interests = [
     ["Hadoop", "Big Data", "HBase", "Java", "Spark", "Storm", "Cassandra"],
     ["NoSQL", "MongoDB", "Cassandra", "HBase", "Postgres"],
@@ -21,10 +24,13 @@ users_interests = [
     ["libsvm", "regression", "support vector machines"]
 ]
 
+# 统计每个词的频次(most_common函数为进行TOPN)
 popular_interests = Counter(interest
                             for user_interests in users_interests
                             for interest in user_interests).most_common()
 
+
+# 推荐,除去给定的兴趣列表后的排名最靠前的兴趣
 def most_popular_new_interests(user_interests, max_results=5):
     suggestions = [(interest, frequency) 
                    for interest, frequency in popular_interests
@@ -33,22 +39,29 @@ def most_popular_new_interests(user_interests, max_results=5):
 
 #
 # user-based filtering
+# 基于用户的协同过滤方法
 #
 
+# 计算余弦相似度
 def cosine_similarity(v, w):
     return dot(v, w) / math.sqrt(dot(v, v) * dot(w, w))
 
+# 获取全部用户的全部兴趣(去重)
 unique_interests = sorted(list({ interest 
                                  for user_interests in users_interests
                                  for interest in user_interests }))
 
+
+# 生成用户兴趣向量
 def make_user_interest_vector(user_interests):
     """given a list of interests, produce a vector whose i-th element is 1
     if unique_interests[i] is in the list, 0 otherwise"""
     return [1 if interest in user_interests else 0
             for interest in unique_interests]
 
+# 为每一个用户生成用户兴趣向量
 user_interest_matrix = map(make_user_interest_vector, users_interests)
+
 
 user_similarities = [[cosine_similarity(interest_vector_i, interest_vector_j)
                       for interest_vector_j in user_interest_matrix]
