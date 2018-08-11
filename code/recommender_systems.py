@@ -3,6 +3,9 @@
 from __future__ import division
 import math, random
 from collections import defaultdict, Counter
+
+from typing import List
+
 from linear_algebra import dot
 
 # 基本数据
@@ -62,11 +65,12 @@ def make_user_interest_vector(user_interests):
 # 为每一个用户生成用户兴趣向量
 user_interest_matrix = map(make_user_interest_vector, users_interests)
 
-
+# 对每两个用户之间计算余弦相似度
 user_similarities = [[cosine_similarity(interest_vector_i, interest_vector_j)
                       for interest_vector_j in user_interest_matrix]
                      for interest_vector_i in user_interest_matrix]
 
+# 对于给定用户编号,找到与其最相似的用户,需要排除自身和与其相似度为0的用户
 def most_similar_users_to(user_id):
     pairs = [(other_user_id, similarity)                      # find other
              for other_user_id, similarity in                 # users with
@@ -78,6 +82,7 @@ def most_similar_users_to(user_id):
                   reverse=True)                               # first
 
 
+# 将这个兴趣的,其他用户也感兴趣的用户相似度相加,为对这个兴趣的权重,根据参数筛选掉已有兴趣属性
 def user_based_suggestions(user_id, include_current_interests=False):
     # sum up the similarities
     suggestions = defaultdict(float)
@@ -100,38 +105,52 @@ def user_based_suggestions(user_id, include_current_interests=False):
 
 #
 # Item-Based Collaborative Filtering
+# 基于物品的协同过滤算法
 #
 
+# 将用户兴趣矩阵进行转置
 interest_user_matrix = [[user_interest_vector[j]
                          for user_interest_vector in user_interest_matrix]
                         for j, _ in enumerate(unique_interests)]
 
+# 再次计算余弦相似度
 interest_similarities = [[cosine_similarity(user_vector_i, user_vector_j)
                           for user_vector_j in interest_user_matrix]
                          for user_vector_i in interest_user_matrix]
 
+# 输入兴趣id,寻找与其最相似的兴趣
 def most_similar_interests_to(interest_id):
+    # 找到这个兴趣的向量
     similarities = interest_similarities[interest_id]
+    # 排除自身和相似度为0的兴趣向量
     pairs = [(unique_interests[other_interest_id], similarity)
              for other_interest_id, similarity in enumerate(similarities)
              if interest_id != other_interest_id and similarity > 0]
+
     return sorted(pairs,
                   key=lambda (_, similarity): similarity,
                   reverse=True)
 
+# 输入用户id获取基于物品的推荐
 def item_based_suggestions(user_id, include_current_interests=False):
+    # 初始化结果参数
     suggestions = defaultdict(float)
+    # 从用户矩阵中选取当前用户矩阵
     user_interest_vector = user_interest_matrix[user_id]
+
+    # 根据用户感兴趣的物品获取其物品与其物品相似度的和
     for interest_id, is_interested in enumerate(user_interest_vector):
         if is_interested == 1:
             similar_interests = most_similar_interests_to(interest_id)
             for interest, similarity in similar_interests:
                 suggestions[interest] += similarity
 
+    # 对与其物品相似度的和进行排序
     suggestions = sorted(suggestions.items(),
                          key=lambda (_, similarity): similarity,
                          reverse=True)
 
+    # 根据参数选取是否推荐已经感兴趣商品
     if include_current_interests:
         return suggestions
     else:
