@@ -1,24 +1,34 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 import math, random, re, datetime
 from collections import defaultdict, Counter
 from functools import partial
+
+from typing import Any, Tuple, Generator
+
 from naive_bayes import tokenize
 
+# 最原始的mapreduce
 def word_count_old(documents):
     """word count not using MapReduce"""
+    # 提取文本中的单词,对其进行计数
     return Counter(word 
         for document in documents 
         for word in tokenize(document))
 
+# map
 def wc_mapper(document):
     """for each word in the document, emit (word,1)"""        
     for word in tokenize(document):
         yield (word, 1)
 
+# reduce
 def wc_reducer(word, counts):
     """sum up the counts for a word"""
     yield (word, sum(counts))
 
+# 单词计数
 def word_count(documents):
     """count the words in the input documents using MapReduce"""
 
@@ -33,22 +43,27 @@ def word_count(documents):
             for word, counts in collector.iteritems()
             for output in wc_reducer(word, counts)]
 
+# 一般化mapreduce
 def map_reduce(inputs, mapper, reducer):
     """runs MapReduce on the inputs using mapper and reducer"""
     collector = defaultdict(list)
 
+    # mapper处理
     for input in inputs:
         for key, value in mapper(input):
             collector[key].append(value)
 
+    # 返回reducer聚合计算
     return [output
             for key, values in collector.iteritems()
             for output in reducer(key,values)]
 
+# 将reducer一般化
 def reduce_with(aggregation_fn, key, values):
     """reduces a key-values pair by applying aggregation_fn to the values"""
     yield (key, aggregation_fn(values))
 
+# 封装成偏函数
 def values_reducer(aggregation_fn):
     """turns a function (values -> output) into a reducer"""
     return partial(reduce_with, aggregation_fn)
@@ -114,8 +129,10 @@ distinct_likers_per_user = map_reduce(status_updates,
 
 #
 # matrix multiplication
+# 矩阵相乘
 #
 
+# m为公共尺寸A的列数B的行数,element为矩阵描述
 def matrix_multiply_mapper(m, element):
     """m is the common dimension (columns of A, rows of B)
     element is a tuple (matrix_name, i, j, value)"""

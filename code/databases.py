@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 import math, random, re
 from collections import defaultdict
@@ -11,34 +13,42 @@ class Table:
         """pretty representation of the table: columns then rows"""
         return str(self.columns) + "\n" + "\n".join(map(str, self.rows))
 
+    # 添加
     def insert(self, row_values):
         if len(row_values) != len(self.columns):
             raise TypeError("wrong number of elements")
         row_dict = dict(zip(self.columns, row_values))
         self.rows.append(row_dict)
 
+    # 更新,输入更新值和寻找原来值的函数(相当于where)
     def update(self, updates, predicate):
         for row in self.rows:
             if predicate(row):
                 for column, new_value in updates.iteritems():
                     row[column] = new_value
 
+    # 删除
     def delete(self, predicate=lambda row: True):
         """delete all rows matching predicate
         or all rows if no predicate supplied"""
         self.rows = [row for row in self.rows if not(predicate(row))]
 
+    # 选择,输入(或不输入)希望保留列名和新的指定列处理后的新列名:函数
     def select(self, keep_columns=None, additional_columns=None):
 
+        # 判断希望保留列名是否为空
         if keep_columns is None:         # if no columns specified,
             keep_columns = self.columns  # return all columns
 
+        # 判断新增列名是否为空
         if additional_columns is None:
             additional_columns = {}
 
         # new table for results
+        # 初始化生成新的表
         result_table = Table(keep_columns + additional_columns.keys())
 
+        # 对当前每列进行处理,获取新的指定列,
         for row in self.rows:
             new_row = [row[column] for column in keep_columns]
             for column_name, calculation in additional_columns.iteritems():
@@ -47,12 +57,14 @@ class Table:
 
         return result_table
 
+    # 筛选条件
     def where(self, predicate=lambda row: True):
         """return only the rows that satisfy the supplied predicate"""
         where_table = Table(self.columns)
         where_table.rows = filter(predicate, self.rows)
         return where_table
 
+    # 限制行数
     def limit(self, num_rows=None):
         """return only the first num_rows rows"""
         limit_table = Table(self.columns)
@@ -61,18 +73,23 @@ class Table:
                             else self.rows)
         return limit_table
 
+    # 聚合,group by,输入聚合字段,和总聚合字段
     def group_by(self, group_by_columns, aggregates, having=None):
 
         grouped_rows = defaultdict(list)
 
         # populate groups
+        # 数据聚合
         for row in self.rows:
             key = tuple(row[column] for column in group_by_columns)
             grouped_rows[key].append(row)
 
         result_table = Table(group_by_columns + aggregates.keys())
 
+
+
         for key, rows in grouped_rows.iteritems():
+            # 对每行进行过滤(为空则不过滤)
             if having is None or having(rows):
                 new_row = list(key)
                 for aggregate_name, aggregate_fn in aggregates.iteritems():
@@ -81,34 +98,42 @@ class Table:
 
         return result_table
 
+    # 表数据排序
     def order_by(self, order):
         new_table = self.select()       # make a copy
         new_table.rows.sort(key=order)
         return new_table
 
+    # 关联
     def join(self, other_table, left_join=False):
 
+        # 同时存在
         join_on_columns = [c for c in self.columns           # columns in
                            if c in other_table.columns]      # both tables
 
+        # 只在右表出现的值
         additional_columns = [c for c in other_table.columns # columns only
                               if c not in join_on_columns]   # in right table
 
         # all columns from left table + additional_columns from right table
+        # 两表全部出现的值,生成表初始化
         join_table = Table(self.columns + additional_columns)
 
         for row in self.rows:
             def is_join(other_row):
                 return all(other_row[c] == row[c] for c in join_on_columns)
 
+            # 右表和左表已关联的值
             other_rows = other_table.where(is_join).rows
 
             # each other row that matches this one produces a result row
+            # 将右表的字段和左表的字段进行合并
             for other_row in other_rows:
                 join_table.insert([row[c] for c in self.columns] +
                                   [other_row[c] for c in additional_columns])
 
             # if no rows match and it's a left join, output with Nones
+            # 如果使用左关联并且右未关联到数据,置空,插入新表
             if left_join and not other_rows:
                 join_table.insert([row[c] for c in self.columns] +
                                   [None for c in additional_columns])
@@ -159,6 +184,7 @@ if __name__ == "__main__":
     print users.select(keep_columns=[],
              additional_columns = { "name_length" : name_len })
     print
+
 
     # GROUP BY
 
