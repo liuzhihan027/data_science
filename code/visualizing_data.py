@@ -1,56 +1,84 @@
+# -*- coding: utf-8 -*-
+
+#数据可视化
+
 import matplotlib.pyplot as plt
 from collections import Counter
 
+# 线型图
 def make_chart_simple_line_chart(plt):
-
+    # 年份数据
     years = [1950, 1960, 1970, 1980, 1990, 2000, 2010]
+    # 每年对应的gdp数据
     gdp = [300.2, 543.3, 1075.9, 2862.5, 5979.6, 10289.7, 14958.3]
 
-    # create a line chart, years on x-axis, gdp on y-axis
+    # 替换sans-serif字体
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    # 解决坐标轴负数显示问题
+    plt.rcParams['axes.unicode_minus'] = False
+
+    # 创建线型图,横轴为年份,纵轴为gdp
     plt.plot(years, gdp, color='green', marker='o', linestyle='solid')
 
-    # add a title
-    plt.title("Nominal GDP")
+    # 添加标题
+    plt.title(u"每年 GDP")
 
-    # add a label to the y-axis
-    plt.ylabel("Billions of $")
+    # 为y轴添加注释
+    plt.ylabel(u"十亿美元")
     plt.show()
 
-
+# 条形图
 def make_chart_simple_bar_chart(plt):
-
+    # 电影名称
     movies = ["Annie Hall", "Ben-Hur", "Casablanca", "Gandhi", "West Side Story"]
+    # 获奖数目
     num_oscars = [5, 11, 3, 8, 10]
 
-    # bars are by default width 0.8, so we'll add 0.1 to the left coordinates
-    # so that each bar is centered
-    xs = [i + 0.1 for i, _ in enumerate(movies)]
+    # 处理中文
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
 
-    # plot bars with left x-coordinates [xs], heights [num_oscars]
+    # 横坐标
+    xs = [i  for i, _ in enumerate(movies)]
+
+    # 根据横纵坐标画图
     plt.bar(xs, num_oscars)
-    plt.ylabel("# of Academy Awards")
-    plt.title("My Favorite Movies")
+    plt.ylabel(u"获奖数量")
+    plt.title(u"最喜爱的电影")
 
-    # label x-axis with movie names at bar centers
-    plt.xticks([i + 0.5 for i, _ in enumerate(movies)], movies)
+    # 电影名称标记x轴
+    plt.xticks([i for i, _ in enumerate(movies)], movies)
     
     plt.show()
 
+
+# 直方图
 def make_chart_histogram(plt):
+    # 处理中文
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
+
+    # 源数据
     grades = [83,95,91,87,70,0,85,82,100,67,73,77,0]
-    decile = lambda grade: grade // 10 * 10 
+    # 划分分数等级
+    decile = lambda grade: grade // 10 * 10
+    # 每个分数级别对应的人数
     histogram = Counter(decile(grade) for grade in grades)
 
-    plt.bar([x - 4 for x in histogram.keys()], # shift each bar to the left by 4
-            histogram.values(),                # give each bar its correct height
-            8)                                 # give each bar a width of 8
-    plt.axis([-5, 105, 0, 5])                  # x-axis from -5 to 105,
-                                               # y-axis from 0 to 5
-    plt.xticks([10 * i for i in range(11)])    # x-axis labels at 0, 10, ..., 100
-    plt.xlabel("Decile")
-    plt.ylabel("# of Students")
-    plt.title("Distribution of Exam 1 Grades")
+    # 第三个参数(8)设置条形宽度
+    plt.bar([x for x in histogram.keys()],
+            histogram.values(),
+            8)
+    # x轴范围(-5~105),y轴范围(0~5)
+    plt.axis([-5, 105, 0, 5])
+
+    # x轴注释(0, 10, ..., 100)
+    plt.xticks([10 * i for i in range(11)])
+    plt.xlabel(u"分数等级")
+    plt.ylabel(u"学生个数")
+    plt.title(u"考试分数分布图")
     plt.show()
+
 
 def make_chart_misleading_y_axis(plt, mislead=True):
 
@@ -143,21 +171,22 @@ def make_chart_pie_chart(plt):
 
 
 if __name__ == "__main__":
+    print 111
 
-    make_chart_simple_line_chart(plt)
-
-    make_chart_simple_bar_chart(plt)
-
-    make_chart_histogram(plt)
-
-    make_chart_misleading_y_axis(plt, mislead=True)
-
-    make_chart_misleading_y_axis(plt, mislead=False)
-
-    make_chart_several_line_charts(plt)
-
-    make_chart_scatterplot_axes(plt, equal_axes=False)
-
-    make_chart_scatterplot_axes(plt, equal_axes=True)
-
-    make_chart_pie_chart(plt)
+    # make_chart_simple_line_chart(plt)
+    #
+    # make_chart_simple_bar_chart(plt)
+    #
+    # make_chart_histogram(plt)
+    #
+    # make_chart_misleading_y_axis(plt, mislead=True)
+    #
+    # make_chart_misleading_y_axis(plt, mislead=False)
+    #
+    # make_chart_several_line_charts(plt)
+    #
+    # make_chart_scatterplot_axes(plt, equal_axes=False)
+    #
+    # make_chart_scatterplot_axes(plt, equal_axes=True)
+    #
+    # make_chart_pie_chart(plt)
