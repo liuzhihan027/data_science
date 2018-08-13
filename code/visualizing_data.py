@@ -52,6 +52,8 @@ def make_chart_simple_bar_chart(plt):
     plt.show()
 
 
+
+
 # 直方图
 def make_chart_histogram(plt):
     # 处理中文
@@ -80,7 +82,11 @@ def make_chart_histogram(plt):
     plt.show()
 
 
+# 糟糕的直方图
 def make_chart_misleading_y_axis(plt, mislead=True):
+    # 处理中文
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
 
     mentions = [500, 505]
     years = [2013, 2014]
@@ -102,47 +108,59 @@ def make_chart_misleading_y_axis(plt, mislead=True):
         plt.title("Not So Huge Anymore.")       
     plt.show()
 
-def make_chart_several_line_charts(plt):
 
+# 线图
+def make_chart_several_line_charts(plt):
+    # 处理中文
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
+
+    # 数据(方差,偏差,总误差)
     variance     = [1,2,4,8,16,32,64,128,256]
     bias_squared = [256,128,64,32,16,8,4,2,1]
     total_error  = [x + y for x, y in zip(variance, bias_squared)]
 
     xs = range(len(variance))
 
-    # we can make multiple calls to plt.plot 
-    # to show multiple series on the same chart
-    plt.plot(xs, variance,     'g-',  label='variance')    # green solid line
-    plt.plot(xs, bias_squared, 'r-.', label='bias^2')      # red dot-dashed line
-    plt.plot(xs, total_error,  'b:',  label='total error') # blue dotted line
+    # 调用多次,可以在同一画布上添加多条线
+    plt.plot(xs, variance,     'g-',  label=u'方差')    # 绿色实线
+    plt.plot(xs, bias_squared, 'r-.', label=u'偏差的平方')      # 红色点虚线
+    plt.plot(xs, total_error,  'b:',  label=u'总误差') # 蓝色点线
 
-    # because we've assigned labels to each series
-    # we can get a legend for free
-    # loc=9 means "top center"
+    # loc=9表示将图例放置在顶部中央
     plt.legend(loc=9)
-    plt.xlabel("model complexity")
-    plt.title("The Bias-Variance Tradeoff")
+    plt.xlabel(u"模型复杂度")
+    plt.title(u"偏差-方差权衡图")
     plt.show()
 
-def make_chart_scatter_plot(plt):
 
+# 散点图
+def make_chart_scatter_plot(plt):
+    # 处理中文
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
+
+    # 数据(朋友数,在社交网站时间,用户标签)
     friends = [ 70, 65, 72, 63, 71, 64, 60, 64, 67]
     minutes = [175, 170, 205, 120, 220, 130, 105, 145, 190]
     labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
 
     plt.scatter(friends, minutes)
     
-    # label each point
+    # 对每个点添加标记
     for label, friend_count, minute_count in zip(labels, friends, minutes):
         plt.annotate(label,
-                     xy=(friend_count, minute_count), # put the label with its point
-                     xytext=(5, -5), # but slightly offset
+                     xy=(friend_count, minute_count), # 将标记放在对应点上
+                     xytext=(5, -5), # 需要部分偏离
                      textcoords='offset points')
 
-    plt.title("Daily Minutes vs. Number of Friends")
-    plt.xlabel("# of friends")
-    plt.ylabel("daily minutes spent on the site")
+    plt.title(u"日分钟数与朋友数")
+
+    plt.xlabel(u"朋友的个数")
+    plt.ylabel(u"花在网站上的日分钟数")
     plt.show()
+
+make_chart_scatter_plot(plt)
 
 def make_chart_scatterplot_axes(plt, equal_axes=False):
 
