@@ -49,12 +49,14 @@ def median(v):
         lo = midpoint - 1
         hi = midpoint
         return (sorted_v[lo] + sorted_v[hi]) / 2
-        
+
+# 分位数
 def quantile(x, p):
     """returns the pth-percentile value in x"""
     p_index = int(p * len(x))
     return sorted(x)[p_index]
 
+# 众数
 def mode(x):
     """returns a list, might be more than one mode"""
     counts = Counter(x)
@@ -63,6 +65,7 @@ def mode(x):
             if count == max_count]
 
 # "range" already means something in Python, so we'll use a different name
+# 极差
 def data_range(x):
     return max(x) - min(x)
 
