@@ -3,6 +3,7 @@
 from __future__ import division
 from collections import Counter
 import math, random
+import matplotlib.pyplot as plt
 
 def random_kid():
     return random.choice(["boy", "girl"])
@@ -27,7 +28,8 @@ def plot_normal_pdfs(plt):
     plt.plot(xs,[normal_pdf(x,sigma=0.5) for x in xs],':',label='mu=0,sigma=0.5')
     plt.plot(xs,[normal_pdf(x,mu=-1)   for x in xs],'-.',label='mu=-1,sigma=1')
     plt.legend()
-    plt.show()      
+    plt.show()
+
 
 def normal_cdf(x, mu=0,sigma=1):
     return (1 + math.erf((x - mu) / math.sqrt(2) / sigma)) / 2  
@@ -40,6 +42,8 @@ def plot_normal_cdfs(plt):
     plt.plot(xs,[normal_cdf(x,mu=-1) for x in xs],'-.',label='mu=-1,sigma=1')
     plt.legend(loc=4) # bottom right
     plt.show()
+
+plot_normal_cdfs(plt)
 
 #用二分法求逆（给出概率求相应的值）
 def inverse_normal_cdf(p, mu=0, sigma=1, tolerance=0.00001):
@@ -121,3 +125,5 @@ if __name__ == "__main__":
 
     print "P(both | older):", both_girls / older_girl      # 0.514 ~ 1/2
     print "P(both | either): ", both_girls / either_girl   # 0.342 ~ 1/3
+
+    make_hist(0.75, 100, 10000)
