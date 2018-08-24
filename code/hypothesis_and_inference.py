@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 from probability import normal_cdf, inverse_normal_cdf
 import math, random

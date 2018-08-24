@@ -47,10 +47,6 @@ plot_normal_cdfs(plt)
 
 #用二分法求逆（给出概率求相应的值）
 def inverse_normal_cdf(p, mu=0, sigma=1, tolerance=0.00001):
-    # type: (object, object, object, object) -> object
-    # type: (object, object, object, object) -> object
-    # type: (object, object, object, object) -> object
-    # type: (object, object, object, object) -> object
     """find approximate inverse using binary search"""
 
     # if not standard, compute standard and rescale
