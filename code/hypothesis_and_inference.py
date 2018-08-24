@@ -19,13 +19,16 @@ def normal_approximation_to_binomial(n, p):
 ######
 
 # the normal cdf _is_ the probability the variable is below a threshold
+# 正常的cdf函数是变量低于阈值的概率
 normal_probability_below = normal_cdf
 
 # it's above the threshold if it's not below the threshold
+# 如果不低于阈值就高于阈值,这个值以上的概率
 def normal_probability_above(lo, mu=0, sigma=1):
     return 1 - normal_cdf(lo, mu, sigma)
     
 # it's between if it's less than hi, but not less than lo
+# 如果高于下界低于上界则在区间内
 def normal_probability_between(lo, hi, mu=0, sigma=1):
     return normal_cdf(hi, mu, sigma) - normal_cdf(lo, mu, sigma)
 
@@ -48,15 +51,19 @@ def normal_lower_bound(probability, mu=0, sigma=1):
     """returns the z for which P(Z >= z) = probability"""
     return inverse_normal_cdf(1 - probability, mu, sigma)
 
+# 正态分布的上下界
 def normal_two_sided_bounds(probability, mu=0, sigma=1):
     """returns the symmetric (about the mean) bounds 
     that contain the specified probability"""
+    # 尾概率
     tail_probability = (1 - probability) / 2
 
     # upper bound should have tail_probability above it
+    # 上界应该有高于他的尾概率
     upper_bound = normal_lower_bound(tail_probability, mu, sigma)
 
     # lower bound should have tail_probability below it
+    # 下界应该有小于他的尾概率
     lower_bound = normal_upper_bound(tail_probability, mu, sigma)
 
     return lower_bound, upper_bound
@@ -141,12 +148,14 @@ if __name__ == "__main__":
     print "power of a test"
     
     print "95% bounds based on assumption p is 0.5"
-    
+
+    # 展示上下界
     lo, hi = normal_two_sided_bounds(0.95, mu_0, sigma_0)
     print "lo", lo
     print "hi", hi
 
     print "actual mu and sigma based on p = 0.55"
+    # 求新的二项分布的期望和均值
     mu_1, sigma_1 = normal_approximation_to_binomial(1000, 0.55)
     print "mu_1", mu_1
     print "sigma_1", sigma_1
@@ -160,7 +169,7 @@ if __name__ == "__main__":
     print "power", power
     print
 
-    print "one-sided test"
+    print "one-sided test"# 单边检验
     hi = normal_upper_bound(0.95, mu_0, sigma_0) 
     print "hi", hi # is 526 (< 531, since we need more probability in the upper tail)
     type_2_probability = normal_probability_below(hi, mu_1, sigma_1)
@@ -177,7 +186,7 @@ if __name__ == "__main__":
     print "upper_p_value(527, mu_0, sigma_0)", upper_p_value(527, mu_0, sigma_0)    
     print 
 
-    print "P-hacking"
+    print "P-hacking" # p
 
     random.seed(0)
     experiments = [run_experiment() for _ in range(1000)]
