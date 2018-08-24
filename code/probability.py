@@ -43,7 +43,7 @@ def plot_normal_cdfs(plt):
     plt.legend(loc=4) # bottom right
     plt.show()
 
-plot_normal_cdfs(plt)
+# plot_normal_cdfs(plt)
 
 #用二分法求逆（给出概率求相应的值）
 def inverse_normal_cdf(p, mu=0, sigma=1, tolerance=0.00001):

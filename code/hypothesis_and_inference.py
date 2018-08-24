@@ -4,6 +4,8 @@ from __future__ import division
 from probability import normal_cdf, inverse_normal_cdf
 import math, random
 
+
+# 找到二项分布的均值和期望
 def normal_approximation_to_binomial(n, p):
     """finds mu and sigma corresponding to a Binomial(n, p)"""
     mu = p * n
@@ -130,6 +132,7 @@ def beta_pdf(x, alpha, beta):
 
 if __name__ == "__main__":
 
+    # 二项分布的均值和期望
     mu_0, sigma_0 = normal_approximation_to_binomial(1000, 0.5)
     print "mu_0", mu_0
     print "sigma_0", sigma_0
