@@ -33,6 +33,7 @@ def normal_probability_between(lo, hi, mu=0, sigma=1):
     return normal_cdf(hi, mu, sigma) - normal_cdf(lo, mu, sigma)
 
 # it's outside if it's not between
+# 如果不在区间之内就在区间之外
 def normal_probability_outside(lo, hi, mu=0, sigma=1):
     return 1 - normal_probability_between(lo, hi, mu, sigma)
 
@@ -42,11 +43,12 @@ def normal_probability_outside(lo, hi, mu=0, sigma=1):
 #
 ######
 
-
+# 正态分布累积函数上界,获取给定概率对应的值
 def normal_upper_bound(probability, mu=0, sigma=1):
     """returns the z for which P(Z <= z) = probability"""
     return inverse_normal_cdf(probability, mu, sigma)
-    
+
+# 正态分布累积函数下界,获取(1-给定概率)对应的值
 def normal_lower_bound(probability, mu=0, sigma=1):
     """returns the z for which P(Z >= z) = probability"""
     return inverse_normal_cdf(1 - probability, mu, sigma)
@@ -162,6 +164,7 @@ if __name__ == "__main__":
 
     # a type 2 error means we fail to reject the null hypothesis
     # which will happen when X is still in our original interval
+    # 第二类错误,
     type_2_probability = normal_probability_between(lo, hi, mu_1, sigma_1)
     power = 1 - type_2_probability # 0.887
 
@@ -182,9 +185,11 @@ if __name__ == "__main__":
 
     print "two_sided_p_value(531.5, mu_0, sigma_0)", two_sided_p_value(531.5, mu_0, sigma_0)
 
-    print "upper_p_value(525, mu_0, sigma_0)", upper_p_value(525, mu_0, sigma_0)
-    print "upper_p_value(527, mu_0, sigma_0)", upper_p_value(527, mu_0, sigma_0)    
-    print 
+    print "upper_p_value(525, mu_0, sigma_0)", upper_p_value(524.5, mu_0, sigma_0)
+    print "upper_p_value(527, mu_0, sigma_0)", upper_p_value(526.5, mu_0, sigma_0)
+    print
+
+    # print count_extreme_values(),11111111
 
     print "P-hacking" # p
 
