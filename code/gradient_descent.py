@@ -29,7 +29,6 @@ def plot_estimated_derivative():
     plt.plot(x, map(derivative_estimate, x), 'b+')  # blue +
     plt.show()                                      # purple *, hopefully
 
-plot_estimated_derivative()
 
 def partial_difference_quotient(f, v, i, h):
 
